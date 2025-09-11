@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterUser;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LogUserRequest;
 
 class UserController extends Controller
@@ -13,15 +15,21 @@ class UserController extends Controller
     public function register(RegisterUser $request)
     {
        try{
-             //dd('ok');
+             //dd('ok'); //pour voir si on est dans le bon module
         $user = new User();
 
         $user->name = $request->name;
         $user->email = $request->email;
-        $user->password = $request->password;
-       // $user->password = hash::make($request->password, [
-       // 'round'=>12]);//methode pour hasher un mdp :pour plus sécuriser le mdp
-
+        $user->password = Hash::make($request->password);
+        $user->password_confirmation = Hash::make($request->password_confirmation);
+        $user->role ='ADMIN';
+        
+        //Pour gérer le système de confirmation de mot de passe.
+         if($request->password !== $request->password_confirmation){
+            return response()->json([
+            'message'=>'Veiller saisir un même mot de passe'
+        ]);
+        }
         $user->save();
 
         return response()->json([
@@ -29,7 +37,10 @@ class UserController extends Controller
             'message'=>'Utilisateur enregistré',
             'user'=>$user
         ]);
-
+       // $user->password = hash::make($request->password, [
+       // 'round'=>12]);//methode pour hasher un mdp :pour plus sécuriser le mdp
+       
+        
        }catch(Exception $e){
             return response()->json($e);
        }
@@ -59,5 +70,17 @@ class UserController extends Controller
             'message'=>'Information non valide',
         ]);
         }
+    }
+
+        // Fonction logout
+    public function logout(Request $request)
+    {
+         // Supprime uniquement le token en cours
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Déconnexion réussie.'
+        ], 200);
     }
 }

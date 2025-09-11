@@ -30,6 +30,8 @@ Route::post('/login', [UserController::class , 'login']);
 Route::middleware('auth:sanctum')->group(function(){
 
 
+    //Pour se déconnecter
+    Route::post('/logout', [UserController::class , 'logout']);
 
     //Routourner l'utilisateur actuellemnt connecté
     Route::get('/user', function (Request $request) {
