@@ -28,8 +28,8 @@ class RegisterUser extends FormRequest
 
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
-            'password'=>'required|min:6',
-
+            'password'=>'required|min:8',
+            'password_confirmation'=>'required',
         ];
     }
 
@@ -54,8 +54,8 @@ class RegisterUser extends FormRequest
         'email.email'=>'adresse email non valide',
         'email.unique'=>'Cette adresse mail existe déjà',
         'password.required'=>'Le mot de passe est requis',
-        'password.min'=> 'Un mot de passe d\'au moins 6 caractères est requis'
-
+        'password.min'=> 'Un mot de passe d\'au moins 8 caractères est requis',
+        'password_confirmation.required'=> 'La confirmation du mot de passe est requis.',
        ]; 
     }
 }
