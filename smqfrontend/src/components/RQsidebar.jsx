@@ -102,15 +102,15 @@ export default function RQSidebar() {
             </Link>
           ))}
         </div>
+        {/* Logout Button */}
+        <div className={styles.logoutContainer}>
+          <button className={`${styles.logoutButton} ${styles.flexItems}`}>
+            <LogOut className={styles.logoutIcon} />
+            DÉCONNEXION
+          </button>
+        </div>
       </div>
 
-      {/* Logout Button */}
-      <div className={styles.logoutContainer}>
-        <button className={`${styles.logoutButton} ${styles.flexItems}`}>
-          <LogOut className={styles.logoutIcon} />
-          DÉCONNEXION
-        </button>
-      </div>
     </div>
   );
 }

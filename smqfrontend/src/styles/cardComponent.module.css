@@ -37,7 +37,7 @@
     border-color: rgba(99, 102, 241, 0.2);
 }
 
-.cardIndex svg {
+/* .cardIndex svg {
     padding: 1rem;
     background: linear-gradient(135deg, #f0f4ff, #e0e7ff);
     border-radius: 12px;
@@ -48,7 +48,7 @@
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     color: white !important;
     transform: scale(1.1);
-}
+} */
 
 .cardIndex h3 {
     font-size: 1.4rem;
@@ -70,10 +70,13 @@
 
 /* CardFeatures styles */
 .cardFeatures {
-    background: linear-gradient(135deg, #7c3aed 0%, #8b5cf6 50%, #a855f7 100%);
-    border: none;
+    background: none;
+    opacity: 0.9;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(235, 232, 232, 0.1);
     border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 15px 35px rgba(80, 79, 79, 0.1);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 3rem 2.5rem;
     position: relative;
@@ -127,7 +130,7 @@
     font-weight: 600;
     font-size: 1.5rem;
     color: #ffffff;
-    margin: 0 0 1rem 0;
+    margin: 0 0 0 0;
     position: relative;
     z-index: 1;
 }

@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
-import { Toaster } from "../components/ui/toaster";
+// import { Toaster } from "../components/ui/toaster";
 import RQSidebar from "@/components/RQsidebar";
+import styles from "@/styles/Layout.module.css";
 
 const LayoutRQ = ({ children }) => {
     const router = useRouter();
@@ -10,12 +11,12 @@ const LayoutRQ = ({ children }) => {
     };
 
     return(
-        <div className="flex">
+        <div className={styles.layout}>
             <RQSidebar />
-            <Toaster />
             <div>
                 {children}
             </div>
         </div>
     )
 }
+export default LayoutRQ;

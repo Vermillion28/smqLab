@@ -1,6 +1,6 @@
 import styles from "@/styles/cardComponent.module.css";
 
-const CardIndex = ({Icone, title, description}) => {
+function CardIndex({Icone, title, description}) {
     return (
         <div className={styles.cardIndex}>
             <Icone size={30} color="#3F2B96" />
@@ -8,5 +8,5 @@ const CardIndex = ({Icone, title, description}) => {
             <p>{description}</p>
         </div>
     );
-};
+}
 export default CardIndex;

@@ -41,7 +41,7 @@ const audits = [
   }
 ];
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status) => {
   switch (status) {
     case "Planifié": return "bg-blue-100 text-blue-800";
     case "En cours": return "bg-yellow-100 text-yellow-800";
@@ -51,7 +51,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getTypeColor = (type: string) => {
+const getTypeColor = (type) => {
   return type === "Interne" ? "bg-purple-100 text-purple-800" : "bg-orange-100 text-orange-800";
 };
 

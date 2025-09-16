@@ -9,7 +9,7 @@ import { FaFileAlt, FaChartLine, FaList, FaClipboardList, FaExclamationTriangle 
 
 export default function Home() {
     return (
-        <div>
+        <div className={styles.body}>
             <div className={styles.navbar}>
                 <div className={styles.logo}>SMQLab</div>
                 <div className={styles.sectionsFocntionalites}>
