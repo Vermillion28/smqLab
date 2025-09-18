@@ -13,7 +13,7 @@ const LayoutRQ = ({ children }) => {
     return(
         <div className={styles.layout}>
             <RQSidebar />
-            <div>
+            <div className={styles.layoutContent}>
                 {children}
             </div>
         </div>

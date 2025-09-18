@@ -2,8 +2,7 @@ import React from "react";
 import Link from "next/link";
 import styles from "@/styles/index.module.css";
 import Image from "next/image";
-import CardIndex from "@/components/cardIndex";
-import CardFeatures from "@/components/cardFeatures";
+import {CardIndex, CardFeatures} from "@/components/MycardComponent";
 import { FaFileAlt, FaChartLine, FaList, FaClipboardList, FaExclamationTriangle } from 'react-icons/fa';
 
 

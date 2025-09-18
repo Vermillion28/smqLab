@@ -9,6 +9,9 @@
 }
 
 .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 2rem;
 }
 
@@ -83,6 +86,25 @@
     border: 1px solid var(--dashboard-border);
 }
 
+.usersList {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.usersList h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+/*
 .usersList {
     display: flex;
     flex-direction: column;
@@ -191,4 +213,228 @@
 
 .permissionBadge {
     font-size: 0.75rem;
-}
+} */
+
+/* Styles pour le modal */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+  
+  .modal {
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
+    animation: modalSlideIn 0.3s ease-out;
+  }
+  
+  .modalCard {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: none;
+  }
+  
+  .modalHeader {
+    border-bottom: 1px solid #e2e8f0;
+    padding: 24px;
+  }
+  
+  .modalTitleSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .modalTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin: 0;
+  }
+  
+  .closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background-color: #f7fafc;
+    color: #718096;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .closeButton:hover {
+    background-color: #edf2f7;
+    color: #4a5568;
+  }
+  
+  /* Styles pour le formulaire */
+  .form {
+    padding: 24px;
+    padding-top: 0;
+  }
+  
+  .formGroup {
+    margin-bottom: 24px;
+  }
+  
+  .label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    background-color: white;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .selectContainer {
+    position: relative;
+  }
+  
+  .select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 48px;
+  }
+  
+  .select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  
+  .select option {
+    padding: 8px;
+    background-color: white;
+    color: #374151;
+  }
+  
+  /* Styles pour les boutons du formulaire */
+  .formActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .cancelButton {
+    padding: 12px 24px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #6b7280;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .cancelButton:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: #4b5563;
+  }
+  
+  .submitButton {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .submitButton:hover {
+    background-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+  }
+  
+  .submitButton:active {
+    transform: translateY(0);
+  }
+  
+  /* Animation d'entrée du modal */
+  @keyframes modalSlideIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  /* Responsive */
+  @media (max-width: 640px) {
+    .modal {
+      margin: 10px;
+    }
+    
+    .modalHeader {
+      padding: 20px;
+    }
+    
+    .form {
+      padding: 20px;
+      padding-top: 0;
+    }
+    
+    .formActions {
+      flex-direction: column-reverse;
+    }
+    
+    .cancelButton,
+    .submitButton {
+      width: 100%;
+    }
+  }
+

@@ -1,0 +1,19 @@
+.nonConformiteBody {
+    height: 100vh;
+}
+
+.nonConformiteHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.nonConformiteTitle {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.nonConformiteIcon {
+    color: #e01d1d;
+}

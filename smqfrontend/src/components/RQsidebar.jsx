@@ -1,34 +1,32 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import {
-  BarChart3, AlertTriangle, Users, FileText, Search, User, Bell, HelpCircle, LogOut
-} from "lucide-react";
-import styles from "@/styles/sidebar.module.css";
-
+import {BarChart3, AlertTriangle, Users, FileText, Search, User, Bell, HelpCircle, LogOut} from "lucide-react";
+// import styles from "@/styles/sidebar.module.css";
+import styles from "@/styles/Layout.module.css";
 const menuItems = [
   {
     title: "Tableau de Bord",
-    url: "/",
+    url: "/responsableQ/dashboard",
     icon: BarChart3
   },
   {
-    title: "Non-Conformité",
-    url: "/non-conformite",
-    icon: AlertTriangle
-  },
-  {
     title: "Utilisateurs",
-    url: "/utilisateurs",
+    url: "/responsableQ/utilisateurs",
     icon: Users
   },
   {
+    title: "Non-Conformité",
+    url: "/responsableQ/nonConformite",
+    icon: AlertTriangle
+  },
+  {
     title: "Documents",
-    url: "/documents",
+    url: "/responsableQ/documents",
     icon: FileText
   },
   {
     title: "Audits",
-    url: "/audits",
+    url: "/responsableQ/audits",
     icon: Search
   },
 ];
@@ -36,17 +34,17 @@ const menuItems = [
 const profileItems = [
   {
     title: "Profil",
-    url: "/profil",
+    url: "/responsableQ/profil",
     icon: User
   },
   {
     title: "Notifications",
-    url: "/notifications",
+    url: "/responsableQ/notifications",
     icon: Bell
   },
   {
     title: "Aide",
-    url: "/aide",
+    url: "/responsableQ/aide",
     icon: HelpCircle
   },
 ];
