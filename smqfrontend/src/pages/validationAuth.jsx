@@ -123,6 +123,20 @@ export default function ValidationAuth() {
           noValidate
           onSubmit={handleSubmit}
         >
+          {/* <div className={styles.formGroup}>
+            <label htmlFor="name">Nom</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Entre votre nom"
+              required
+              onChange={(e) => setName(e.target.value)}
+              className={errors.name ? styles.error : ''}
+            />
+            {errors.name && <div className={styles.errorMessage}>{errors.name}</div>}
+          </div> */}
+
           <div className={styles.formGroup}>
             <label htmlFor="email">Adresse email</label>
             <input

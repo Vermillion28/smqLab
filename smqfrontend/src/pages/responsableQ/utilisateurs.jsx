@@ -174,59 +174,31 @@ export default function Utilisateurs() {
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSubmit} className={styles.form}>
+
                     <div className={styles.formGroup}>
-                      <label htmlFor="email" className={styles.label}>
-                        Email de l'utilisateur
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className={styles.input}
-                        placeholder="example@company.com"
-                        required
-                      />
+                      <label htmlFor="name" className={styles.label}>Nom de l'utilisateur</label>
+                      <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Nom de l'utilisateur" required />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label htmlFor="email" className={styles.label}>Email de l'utilisateur</label>
+                      <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className={styles.input} placeholder="example@gmail.com" required />
                     </div>
 
                     <div className={styles.formGroup}>
-                      <label htmlFor="role" className={styles.label}>
-                        Rôle
-                      </label>
+                      <label htmlFor="role" className={styles.label}>Rôle</label>
                       <div className={styles.selectContainer}>
-                        <select
-                          id="role"
-                          name="role"
-                          value={formData.role}
-                          onChange={handleInputChange}
-                          className={styles.select}
-                          required
-                        >
+                        <select id="role" name="role" value={formData.role} onChange={handleInputChange} className={styles.select} required>
                           <option value="">Sélectionner un rôle</option>
                           {roleOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
+                            <option key={option.value} value={option.value}>{option.label}</option>
                           ))}
                         </select>
                       </div>
                     </div>
 
                     <div className={styles.formActions}>
-                      <button
-                        type="button"
-                        onClick={closeModal}
-                        className={styles.cancelButton}
-                      >
-                        Annuler
-                      </button>
-                      <button
-                        type="submit"
-                        className={styles.submitButton}
-                      >
-                        Ajouter l'utilisateur
-                      </button>
+                      <button type="button" onClick={closeModal} className={styles.cancelButton}>Annuler</button>
+                      <button type="submit" className={styles.submitButton}>Ajouter l'utilisateur</button>
                     </div>
                   </form>
                 </CardContent>
