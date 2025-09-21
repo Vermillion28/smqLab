@@ -25,8 +25,11 @@ Route::post('/register', [UserController::class, 'register']);
 //Authentification d'un utilisateur
 Route::post('/login', [UserController::class , 'login']);
 
+//Une route pour définir le mot de passe
+Route::post('/set-password', [UserController::class, 'setPassword']);
 
-//ici on va retourner un groupe de fonction
+
+//ici on va retourner un groupe de fonction(Pour les routes protégées)
 Route::middleware('auth:sanctum')->group(function(){
 
 
@@ -37,4 +40,18 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
+
+    // Seul l’admin peut créer d’autres utilisateurs
+    Route::post('/create-user', [UserController::class, 'createUser']);
+
+    // Modifier rôle d’un utilisateur
+    Route::put('/users/{id}/role', [UserController::class, 'updateUserRole']);
+
+    // Supprimer un utilisateur
+    Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
+
+    // Pour récupérer tous les utilisateurs 
+    Route::get('/users', [UserController::class, 'getAllUsers']);
+
+
 });

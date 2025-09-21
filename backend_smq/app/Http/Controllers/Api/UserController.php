@@ -4,83 +4,297 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Mail\SetPasswordMail;
 use App\Http\Requests\RegisterUser;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\LogUserRequest;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {
+    // ----------------------------
+    // Inscription Admin
+    // ----------------------------
     public function register(RegisterUser $request)
     {
-       try{
-             //dd('ok'); //pour voir si on est dans le bon module
-        $user = new User();
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->password_confirmation = Hash::make($request->password_confirmation);
-        $user->role ='ADMIN';
-        
-        //Pour gérer le système de confirmation de mot de passe.
-         if($request->password !== $request->password_confirmation){
+        try {
+            // Vérifier s'il existe déjà un admin
+        if (User::where('role', 'ADMIN')->exists()) {
             return response()->json([
-            'message'=>'Veiller saisir un même mot de passe'
-        ]);
+                'success' => false,
+                'status_code' => 403,
+                'message' => 'Un administrateur existe déjà. Impossible d’en créer un autre.'
+            ], 403);
         }
-        $user->save();
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->role = 'ADMIN';
+            $user->password_set = true;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'status_code' => 201,
+                'message' => 'Administrateur inscrit avec succès',
+                'user' => $user->only(['id','name','email','role','password_set','created_at','updated_at'])
+            ], 201);
+
+        } catch(Exception $e) {
+            return response()->json([
+                'success' => false,
+                'status_code' => 500,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // ----------------------------
+    // Connexion
+    // ----------------------------
+    public function login(Request $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (!auth()->attempt($credentials)) {
+            return response()->json([
+                'success' => false,
+                'status_code' => 401,
+                'message' => 'Informations invalides'
+            ], 401);
+        }
+
+        $user = auth()->user();
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'status_code'=> 200,
-            'message'=>'Utilisateur enregistré',
-            'user'=>$user
+            'success' => true,
+            'status_code' => 200,
+            'message' => 'Connexion réussie',
+            'token' => $token,
+            'user' => $user->only(['id','name','email','role','password_set','created_at','updated_at'])
         ]);
-       // $user->password = hash::make($request->password, [
-       // 'round'=>12]);//methode pour hasher un mdp :pour plus sécuriser le mdp
-       
-        
-       }catch(Exception $e){
-            return response()->json($e);
-       }
     }
 
-    public function login(LogUserRequest $request)
-    {
-        if(auth()->attempt($request->only(['email', 'password']))){
-            //si les infos sont correcte
-            //on récupère l'utilisateur qui essai de se connecter
-            $user = auth()->user();
-
-            //on créee un token se basant sur les informations de l'utilisateur; en appellant une méthode méconnu de laravel pour lui dire de créer un token en lui passant un clé de sécurité qui ne doit être connu qu'au backend et on converti le token qui sera généré en plainTextToken
-            $token = $user->createToken('MA_CLE_SECRETE_VISIBLE_UNIQUEMENT_AU_BACKEND')->plainTextToken;
-
-             return response()->json([
-            'status_code'=> 200,
-            'status_message'=>'Utilisateur connecté',
-            'user'=> $user,
-            'token'=> $token
-        ]);
-
-        }else{
-            //Si les infos ne correspondent à aucun utilisateur
-             return response()->json([
-            'status_code'=> 403,
-            'message'=>'Information non valide',
-        ]);
-        }
-    }
-
-        // Fonction logout
+    // ----------------------------
+    // Déconnexion
+    // ----------------------------
     public function logout(Request $request)
     {
-         // Supprime uniquement le token en cours
         $request->user()->currentAccessToken()->delete();
 
         return response()->json([
-            'status'  => 'success',
+            'success'  => true,
+            'status_code' => 200,
             'message' => 'Déconnexion réussie.'
-        ], 200);
+        ]);
     }
+
+    // ----------------------------
+    // Création d'un utilisateur par Admin
+    // ----------------------------
+    public function createUser(Request $request)
+    {
+        // Vérifier rôle admin
+        if(auth()->user()->role !== 'ADMIN') {
+            return response()->json([
+                'success' => false,
+                'status_code' => 403,
+                'message' => 'Accès refusé : seuls les administrateurs peuvent créer des utilisateurs.'
+            ], 403);
+        }
+
+        // Validation
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'role' => 'required|in:RESPONSABLE,CO_RESPONSABLE,COLLABORATEUR,AUDITEUR'
+        ]);
+
+        // Créer utilisateur sans mot de passe
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => $request->role,
+            'password' => null,
+            'password_set' => false,
+        ]);
+
+        // Générer token pour définir mot de passe
+        $token = Str::random(60);
+        $user->set_password_token = $token;
+        $user->password_set = false;
+        $user->save();
+
+        // Envoyer l'email
+        Mail::to($user->email)->send(new SetPasswordMail($user, $token));
+
+        return response()->json([
+            'success' => true,
+            'status_code' => 201,
+            'message' => 'Utilisateur créé avec succès',
+            'user' => $user->only(['id','name','email','role','password_set','set_password_token','created_at','updated_at'])
+        ], 201);
+    }
+
+    // ----------------------------
+    // Définir le mot de passe via email
+    // ----------------------------
+    public function setPassword(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = User::where('email', $request->email)
+                    ->where('set_password_token', $request->token)
+                    ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'status_code' => 400,
+                'message' => 'Token invalide ou utilisateur non trouvé.'
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->password_set = true;
+        $user->set_password_token = null;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'status_code' => 200,
+            'message' => 'Mot de passe défini avec succès',
+            'user' => $user->only(['id','name','email','role','password_set'])
+        ],200);
+    }
+
+    public function updateUserRole(Request $request, $id)
+{
+    if (auth()->user()->role !== 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'status_code' => 403,
+            'message' => 'Accès refusé : seuls les administrateurs peuvent modifier les rôles.'
+        ], 403);
+    }
+
+    $request->validate([
+        'role' => 'required|in:RESPONSABLE,COLLABORATEUR'
+    ]);
+
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'status_code' => 404,
+            'message' => 'Utilisateur non trouvé'
+        ], 404);
+    }
+
+    // Interdire de modifier l’admin unique
+    if ($user->role === 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'status_code' => 403,
+            'message' => 'Impossible de modifier le rôle de l’administrateur.'
+        ], 403);
+    }
+
+    $user->role = $request->role;
+    $user->save();
+
+    return response()->json([
+        'success' => true,
+        'status_code' => 200,
+        'message' => 'Rôle modifié avec succès',
+        'user' => $user->only(['id','name','email','role'])
+    ]);
+}
+
+public function deleteUser($id)
+{
+    if (auth()->user()->role !== 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'status_code' => 403,
+            'message' => 'Accès refusé : seuls les administrateurs peuvent supprimer un utilisateur.'
+        ], 403);
+    }
+
+    $user = User::find($id);
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'status_code' => 404,
+            'message' => 'Utilisateur non trouvé'
+        ], 404);
+    }
+
+    // Interdire de supprimer l’admin unique
+    if ($user->role === 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'status_code' => 403,
+            'message' => 'Impossible de supprimer l’administrateur.'
+        ], 403);
+    }
+
+    $user->delete();
+
+    return response()->json([
+        'success' => true,
+        'status_code' => 200,
+        'message' => 'Utilisateur supprimé avec succès'
+    ]);
+}
+
+public function getAllUsers(Request $request)
+{
+    $admin = Auth::user();
+
+    if ($admin->role !== 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Accès refusé. Seul l’administrateur peut voir la liste des utilisateurs.'
+        ], 403);
+    }
+
+    $query = User::query();
+
+    // 🔎 Filtres dynamiques
+    if ($request->has('name')) {
+        $query->where('name', 'like', '%' . $request->name . '%');
+    }
+
+    if ($request->has('email')) {
+        $query->where('email', 'like', '%' . $request->email . '%');
+    }
+
+    if ($request->has('role')) {
+        $query->where('role', $request->role);
+    }
+
+    //  Pagination : par défaut 10 utilisateurs par page
+    $perPage = $request->get('per_page', 10);
+    $users = $query->paginate($perPage);
+
+    return response()->json([
+        'success' => true,
+        'users' => $users
+    ]);
+}
+
+
 }

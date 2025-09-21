@@ -31,7 +31,7 @@ class LogUserRequest extends FormRequest
     }
 
     // pour retourner la liste des erreurs : au cas où la validation échoue
-    protected function failedValidation(Validator $validator) // ⚠️ doit être protected
+    protected function failedValidation(Validator $validator) //  doit être protected
     {
         throw new HttpResponseException(response()->json([
             'success'    => false,
