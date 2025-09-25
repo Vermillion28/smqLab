@@ -81,11 +81,7 @@ export default function RQSidebar() {
       <div className={styles.mainNav}>
         <nav className={styles.nav}>
           {menuItems.map((item) => (
-            <Link
-              key={item.title}
-              href={item.url}
-              className={getNavClasses(item.url)}
-            >
+            <Link key={item.title} href={item.url} className={getNavClasses(item.url)}>
               <item.icon className={styles.icon} />
               <span className={styles.text}>{item.title}</span>
             </Link>

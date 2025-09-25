@@ -5,38 +5,36 @@ import { useState } from "react";
 import styles from "@/styles/utilisateurs.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import MyButton from "@/components/myButtonComponent";
-import { CardUsers } from "@/components/MycardComponent";
+import { CardProcessus } from "@/components/MycardComponent";
 
-const users = [
+const processus = [
   {
     id: 1,
-    name: "Marie Dubois",
-    email: "marie.dubois@company.com",
-    role: "Responsable Qualité",
-    department: "Qualité",
+    name: "Controle Qualité Produits",
+    description: "Processus de vérification et validation des produits finis",
     status: "Actif",
+    author: "Marie Dubois",
+    lastUpdate: "2025-06-15",
+    documents: "5",
+    tasks: "3",
+    progressValue: 30,
   },
   {
     id: 2,
-    name: "Jean Martin",
-    email: "jean.martin@company.com",
-    role: "Technicien Qualité",
-    department: "Production",
-    status: "Actif",
+    name: "Gestion des Commandes Clients",
+    description: "Traitement des commandes depuis la réception jusqu'à la livraison",
+    status: "en cours",
+    author: "Jean Martin",
+    lastUpdate: "2025-09-15",
+    documents: "5",
+    tasks: "3",
+    progressValue: 50,
   },
-  {
-    id: 3,
-    name: "Pierre Durand",
-    email: "pierre.durand@company.com",
-    role: "Auditeur Interne",
-    department: "Qualité",
-    status: "En attente",
-  }
 ];
-
-const roleOptions = [
-  { value: "responsable_processus", label: "Responsable processus" },
-  { value: "collaborateur", label: "Collaborateur" },
+ //données statique pour le select
+const responsableOptions = [
+  { value: "Marie Dubois", label: "Marie Dubois" },
+  { value: "Jean Martin", label: "Jean Martin" },
 ];
 
 const getStatusColor = (status) => {
@@ -46,8 +44,8 @@ const getStatusColor = (status) => {
 export default function Utilisateurs() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    email: "",
-    role: ""
+    name: "",
+    responsable: ""
   });
 
   const handleInputChange = (e) => {
@@ -63,13 +61,13 @@ export default function Utilisateurs() {
     // Logique pour ajouter l'utilisateur
     console.log("Nouveau utilisateur:", formData);
     // Réinitialiser le formulaire et fermer le modal
-    setFormData({ email: "", role: "" });
+    setFormData({ name: "", responsable: "" });
     setIsModalOpen(false);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setFormData({ email: "", role: "" });
+    setFormData({ name: "", responsable: "" });
   };
 
   // Fonctions pour gérer les actions des cartes
@@ -84,11 +82,8 @@ export default function Utilisateurs() {
         <div className={styles.content}>
           <div className={styles.header}>
             <div>
-              <h1 className={styles.title}>
-                <RefreshCcw className={styles.titleIcon} />
-                Processus
-              </h1>
-              <p className={styles.subtitle}>Gestion des processus</p>
+              <h1 className={styles.title}> <RefreshCcw className={styles.titleIcon} />Gestion des Processus</h1>
+              <p className={styles.subtitle}>Gérer et suivez tous vos processus métiers</p>
             </div>
             <div>
               <MyButton text="+ Créer un Nouveau processus" onClick={() => setIsModalOpen(true)} />
@@ -99,52 +94,43 @@ export default function Utilisateurs() {
           <div className={styles.statsGrid}>
             <Card className={styles.statsCard}>
               <CardHeader className={styles.statsCardHeader}>
-                <CardTitle className={styles.statsCardTitle}>Total Processus</CardTitle>
+                <CardTitle className={styles.statsCardTitle}>Processus déclarer ce trimestre</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={styles.statsValue}>84</div>
+                <div className={styles.statsValue}>12</div>
               </CardContent>
             </Card>
 
             <Card className={styles.statsCard}>
               <CardHeader className={styles.statsCardHeader}>
-                <CardTitle className={styles.statsCardTitle}>Actifs</CardTitle>
+                <CardTitle className={styles.statsCardTitle}>Processus en Cours</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className={`${styles.statsValue} ${styles.activeStats}`}>76</div>
+                <div className={`${styles.statsValue} ${styles.activeStats}`}>7</div>
               </CardContent>
             </Card>
 
             <Card className={styles.statsCard}>
               <CardHeader className={styles.statsCardHeader}>
-                <CardTitle className={styles.statsCardTitle}>Administrateurs</CardTitle>
+                <CardTitle className={styles.statsCardTitle}>Processus Terminés</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className={`${styles.statsValue} ${styles.adminStats}`}>5</div>
               </CardContent>
             </Card>
-
-            <Card className={styles.statsCard}>
-              <CardHeader className={styles.statsCardHeader}>
-                <CardTitle className={styles.statsCardTitle}>Nouveaux ce mois</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className={`${styles.statsValue} ${styles.newStats}`}>12</div>
-              </CardContent>
-            </Card>
           </div>
 
-          {/* Liste des utilisateurs */}
+          {/* Liste des processus */}
           <div className={styles.usersList}>
             <h1 className={styles.usersListTitle}>Liste des Processus</h1>
             <div className={styles.usersGrid}>
-              {users.map((user) => {
-                const statusColor = user.status === "Actif"
+              {processus.map((processus) => {
+                const statusColor = processus.status === "Actif"
                   ? styles.activeStatus
                   : styles.inactiveStatus;
 
                 return (
-                  <CardUsers key={user.id} userName={user.name} userEmail={user.email} userRole={user.role} userDepartment={user.department} userStatus={user.status} userStatusColor={statusColor} />
+                  <CardProcessus key={processus.id} processusName={processus.name} processusDescription={processus.description} processusStatus={processus.status} processusAuthor={processus.author} lastUpdate={processus.lastUpdate} documents={processus.documents} tasks={processus.tasks} progressValue={processus.progressValue} />
                 );
               })}
             </div>
@@ -174,17 +160,13 @@ export default function Utilisateurs() {
                       <label htmlFor="name" className={styles.label}>Nom du processus</label>
                       <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Nom du processus" required />
                     </div>
-                    <div className={styles.formGroup}>
-                      <label htmlFor="email" className={styles.label}>Email du processus</label>
-                      <input type="email" id="email" name="email" value={formData.email} onChange={handleInputChange} className={styles.input} placeholder="example@gmail.com" required />
-                    </div>
 
                     <div className={styles.formGroup}>
-                      <label htmlFor="role" className={styles.label}>Rôle</label>
+                      <label htmlFor="role" className={styles.label}>Responsable du processus</label>
                       <div className={styles.selectContainer}>
                         <select id="role" name="role" value={formData.role} onChange={handleInputChange} className={styles.select} required>
-                          <option value="">Sélectionner un rôle</option>
-                          {roleOptions.map((option) => (
+                          <option value="">Sélectionner un responsable</option>
+                          {responsableOptions.map((option) => (
                             <option key={option.value} value={option.value}>{option.label}</option>
                           ))}
                         </select>

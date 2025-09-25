@@ -1,6 +1,7 @@
 import styles from "@/styles/cardComponent.module.css";
 import { Mail, User, Building2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 function CardIndex({ Icone, title, description }) {
     return (
@@ -42,4 +43,30 @@ function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, 
     );
 }
 
-export { CardIndex, CardFeatures, CardUsers };
+function CardProcessus({ processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue }) {
+    return (
+        <div className={styles.processusCard}>
+            <div className={styles.processusCardHeader}>
+                <div>
+                    <div className={styles.processusCardTitle}>
+                        <h2>{processusName}</h2><span className={`${styles.statusBadge} ${processusStatus === "Actif" ? styles.activeStatus : styles.inactiveStatus}`}>{processusStatus}</span>
+                    </div>
+                    <p>{processusDescription}</p>
+                </div>
+                <div>
+                    <Button size="lg" variant="outline" color="primary">Modifier</Button>
+                </div>
+            </div>
+            <div className={styles.processusCardContent}>
+                <div>Responsable : <br /><span className={styles.processusValue}>{processusAuthor}</span></div>
+                <div>Dernière mise à jour : <br /><span className={styles.processusValue}>{lastUpdate}</span></div>
+                <div>Documents : <br /><span className={styles.processusValue}>{documents}</span></div>
+                <div>Tâches : <br /><span className={styles.processusValue}>{tasks}</span></div>
+            </div>
+            <p style={{ marginTop: "1rem" }}>Progression</p>
+            <Progress className={styles.processusProgress} value={progressValue} />
+        </div>
+    );
+}
+
+export { CardIndex, CardFeatures, CardUsers, CardProcessus };
