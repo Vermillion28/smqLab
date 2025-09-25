@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import {BarChart3, AlertTriangle, Users, FileText, Search, User, Bell, HelpCircle, LogOut} from "lucide-react";
+import {BarChart3, AlertTriangle, Users, FileText, Search, User, Bell, HelpCircle, LogOut, File, RefreshCcw} from "lucide-react";
 // import styles from "@/styles/sidebar.module.css";
 import styles from "@/styles/Layout.module.css";
 const menuItems = [
@@ -13,6 +13,11 @@ const menuItems = [
     title: "Utilisateurs",
     url: "/responsableQ/utilisateurs",
     icon: Users
+  },
+  {
+    title : "Processus",
+    url: "/responsableQ/processus",
+    icon: RefreshCcw
   },
   {
     title: "Non-Conformité",

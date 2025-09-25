@@ -213,3 +213,13 @@
     background-color: #e7870a;
     color: white;
   }
+
+  .userCardButtons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .userCardButtons Button {
+    flex: 1;
+    cursor: pointer;
+  }

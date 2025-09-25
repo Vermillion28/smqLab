@@ -1,6 +1,6 @@
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import {AlertTriangle} from "lucide-react";
-import styles from "@/styles/nonConformite.module.css";
+import styles from "@/styles/responsableQ.module.css";
 import {Button} from "@/components/ui/button";
 
 export default function NonConformite() {
