@@ -99,24 +99,22 @@ class UserController extends Controller
     // Création d'un utilisateur par Admin
     // ----------------------------
     public function createUser(Request $request)
-    {
-        // Vérifier rôle admin
-        if(auth()->user()->role !== 'ADMIN') {
-            return response()->json([
-                'success' => false,
-                'status_code' => 403,
-                'message' => 'Accès refusé : seuls les administrateurs peuvent créer des utilisateurs.'
-            ], 403);
-        }
+{
+    if(auth()->user()->role !== 'ADMIN') {
+        return response()->json([
+            'success' => false,
+            'status_code' => 403,
+            'message' => 'Accès refusé : seuls les administrateurs peuvent créer des utilisateurs.'
+        ], 403);
+    }
 
-        // Validation
+    try {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'role' => 'required|in:RESPONSABLE,CO_RESPONSABLE,COLLABORATEUR,AUDITEUR'
         ]);
 
-        // Créer utilisateur sans mot de passe
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -125,13 +123,10 @@ class UserController extends Controller
             'password_set' => false,
         ]);
 
-        // Générer token pour définir mot de passe
         $token = Str::random(60);
         $user->set_password_token = $token;
-        $user->password_set = false;
         $user->save();
 
-        // Envoyer l'email
         Mail::to($user->email)->send(new SetPasswordMail($user, $token));
 
         return response()->json([
@@ -140,7 +135,23 @@ class UserController extends Controller
             'message' => 'Utilisateur créé avec succès',
             'user' => $user->only(['id','name','email','role','password_set','set_password_token','created_at','updated_at'])
         ], 201);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'status_code' => 422,
+            'errors' => $e->errors(),
+            'message' => 'Erreur de validation'
+        ], 422);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'status_code' => 500,
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
+
 
     // ----------------------------
     // Définir le mot de passe via email
@@ -287,7 +298,7 @@ public function getAllUsers(Request $request)
     }
 
     //  Pagination : par défaut 10 utilisateurs par page
-    $perPage = $request->get('per_page', 10);
+    $perPage = $request->get('per_page', 15);
     $users = $query->paginate($perPage);
 
     return response()->json([

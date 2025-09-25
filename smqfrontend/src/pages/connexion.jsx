@@ -58,7 +58,7 @@ export default function Inscription() {
         // Redirection vers le dashboard après 1 seconde
          setTimeout(() => {
           router.push("/responsableQ/dashboard");
-         }, 5000);
+         }, 4000);
       } else {"'(-'"
         // Cas 1 : erreurs de validation Laravel
         if (data.errorsList) {

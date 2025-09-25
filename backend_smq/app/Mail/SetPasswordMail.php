@@ -28,7 +28,9 @@ class SetPasswordMail extends Mailable
      */
     public function build()
     {
-        $url = url("/api/set-password?email={$this->user->email}&token={$this->token}");
+        // 🔹 Lien vers la page frontend Next.js pour définir le mot de passe
+        $frontendUrl = config('app.frontend_url', 'http://localhost:3000'); // mettre ton frontend URL dans .env si tu veux
+        $url = $frontendUrl . "/validationAuth?email={$this->user->email}&token={$this->token}";
 
         return $this->subject('Définir votre mot de passe')
                     ->markdown('emails.set-password')

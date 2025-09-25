@@ -2,8 +2,14 @@ import { useState, useRef, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import styles from "@/styles/validationAuth.module.css";
+import { useRouter } from 'next/router'; // <-- pour accéder aux query params
 
 export default function ValidationAuth() {
+  const router = useRouter();
+
+  // 🔹 On récupère email et token depuis l'URL
+  const { email: queryEmail, token } = router.query;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -11,6 +17,13 @@ export default function ValidationAuth() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const confirmPasswordRef = useRef(null);
+
+  // 🔹 Pré-remplir l'email automatiquement depuis l'URL si présent
+  useEffect(() => {
+    if (queryEmail) {
+      setEmail(queryEmail);
+    }
+  }, [queryEmail]);
 
   // Validation en temps réel pour la confirmation du mot de passe
   useEffect(() => {
@@ -25,7 +38,8 @@ export default function ValidationAuth() {
     }
   }, [password, confirmPassword]);
 
-  const handleSubmit = (e) => {
+  // 🔹 handleSubmit mis à jour pour appeler l'API Laravel
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -52,68 +66,42 @@ export default function ValidationAuth() {
       setErrors(newErrors);
       setIsSubmitting(false);
 
-      // Afficher une notification d'erreur
-      toast.error('Veuillez corriger les erreurs dans le formulaire', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-
+      toast.error('Veuillez corriger les erreurs dans le formulaire');
       return;
     }
 
-    // Simulation d'envoi du formulaire
-    setTimeout(() => {
-      // Afficher une notification de succès
-      toast.success('Compte créé avec succès! Redirection...', {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
+    try {
+      // 🔹 Requête vers ton backend Laravel
+      const res = await fetch("http://127.0.0.1:8000/api/set-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          token,
+          password,
+          password_confirmation: confirmPassword
+        })
       });
 
-      setIsSubmitting(false);
+      const data = await res.json();
 
-      // Réinitialiser le formulaire
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
-      setErrors({});
-    }, 1000);
-  };
+      if (res.ok) {
+        toast.success('Mot de passe défini avec succès ! Redirection...');
+        setTimeout(() => router.push("/connexion"), 2000); // 🔹 Redirection vers la page de connexion
+      } else {
+        toast.error(data.message || "Erreur lors de la création du mot de passe");
+      }
+    } catch (err) {
+      toast.error("Erreur serveur, réessayez plus tard");
+    }
 
-  const handleLoginRedirect = (e) => {
-    e.preventDefault();
-    // Afficher une notification d'information
-    toast.info('Redirection vers la page de connexion', {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    setIsSubmitting(false);
   };
 
   return (
     <div className={styles.body}>
       <div className={styles.card}>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+        <ToastContainer />
 
         <h1>Inscription</h1>
         <p>Valider votre inscription</p>
@@ -123,20 +111,6 @@ export default function ValidationAuth() {
           noValidate
           onSubmit={handleSubmit}
         >
-          {/* <div className={styles.formGroup}>
-            <label htmlFor="name">Nom</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Entre votre nom"
-              required
-              onChange={(e) => setName(e.target.value)}
-              className={errors.name ? styles.error : ''}
-            />
-            {errors.name && <div className={styles.errorMessage}>{errors.name}</div>}
-          </div> */}
-
           <div className={styles.formGroup}>
             <label htmlFor="email">Adresse email</label>
             <input
@@ -148,6 +122,7 @@ export default function ValidationAuth() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={errors.email ? styles.error : ''}
+              disabled // 🔹 On désactive le champ email car il vient de l'URL
             />
             {errors.email && <div className={styles.errorMessage}>{errors.email}</div>}
           </div>
