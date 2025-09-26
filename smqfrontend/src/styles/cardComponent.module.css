@@ -282,9 +282,6 @@
     height: 10px;
     background-color: #39be6c;
 }
-.processusProgress[value] {
-    color: #39be6c;
-}
 
 .menuContainer {
     position: relative;

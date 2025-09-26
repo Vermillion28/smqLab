@@ -44,30 +44,31 @@ function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, 
     );
 }
 
-function CardProcessus({processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}) {
+function CardProcessus({processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}){
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const handleMenuClick = () => {
+/* Fonctions de gestion du menu */
+    function handleMenuClick(){
         setIsMenuOpen(!isMenuOpen);
     };
-    const handleEdit = () => {
+    function handleEdit(){
         setIsMenuOpen(false);
         onEdit(processusId);
     };
 
-    const handleDelete = () => {
+    function handleDelete(){
         setIsMenuOpen(false);
         onDelete(processusId);
     };
 
-    // Fermer le menu si on clique ailleurs
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (isMenuOpen && !event.target.closest('menuContainer')) {
+
+            if (isMenuOpen && !event.target.closest('[class*="menuContainer"]')) {
                 setIsMenuOpen(false);
             }
         };
-
+    
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isMenuOpen]);
@@ -100,12 +101,10 @@ function CardProcessus({processusName, processusDescription, processusStatus, pr
 
                     {isMenuOpen && (
                         <div className={styles.dropdownMenu}>
-                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                            >
+                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
                                 <SquarePen size={16} />Modifier
                             </button>
-                            <button className={styles.menuItem + ' ' + styles.deleteMenuItem} onClick={handleDelete} onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                            >
+                            <button className={styles.menuItem + ' ' + styles.deleteMenuItem} onClick={handleDelete} onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
                                 <Trash2 size={16} />Supprimer
                             </button>
                         </div>
@@ -114,21 +113,13 @@ function CardProcessus({processusName, processusDescription, processusStatus, pr
             </div>
 
             <div className={styles.processusCardContent}>
-                <div>
-                    Responsable : <br />
-                    <span className={styles.processusValue}>{processusAuthor}</span>
-                </div>
-                <div>Dernière mise à jour : <br />
-                    <span className={styles.processusValue}>{lastUpdate}</span>
-                </div>
-                <div>
-                    Documents : <br />
-                    <span className={styles.processusValue}>{documents}</span>
-                </div>
-                <div>
-                    Tâches : <br />
-                    <span className={styles.processusValue}>{tasks}</span>
-                </div>
+                <div>Responsable : <br /> <span className={styles.processusValue}>{processusAuthor}</span></div>
+
+                <div>Dernière mise à jour : <br /><span className={styles.processusValue}>{lastUpdate}</span></div>
+
+                <div>Documents : <br /><span className={styles.processusValue}>{documents}</span></div>
+
+                <div>Tâches : <br /><span className={styles.processusValue}>{tasks}</span></div>
             </div>
 
             <p className={styles.processusProgressLabel}>Progression</p>
