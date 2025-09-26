@@ -42,8 +42,8 @@ function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, 
                 <p><span><Shield size={20} strokeWidth={1} />{userRole}</span></p>
             </div>
             <div className={styles.userCardButtons}>
-                <Button size="lg" variant="outline" color="primary" onClick={() => onEdit(userId)}><SquarePen size={16} strokeWidth={1} />Modifier</Button>
-                <Button size="lg" variant="destructive" onClick={() => onDelete(userId)}>Supprimer</Button>
+                <Button size="lg" className={styles.editButtonUsers} onClick={() => onEdit(userId)}><SquarePen size={16} strokeWidth={1} />Modifier</Button>
+                <Button size="lg" className={styles.deleteButtonUsers} onClick={() => onDelete(userId)}>Supprimer</Button>
             </div>
         </div>
     );
