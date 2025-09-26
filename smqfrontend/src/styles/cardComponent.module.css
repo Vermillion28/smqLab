@@ -225,7 +225,17 @@
     flex: 1;
     cursor: pointer;
 }
+.editButtonUsers {
+    background-color: #fefdfd;
+    color: rgb(74, 74, 74);
+}
+.deleteButtonUsers {
+    background-color: #e31c1c;
+    color: white;
+}
 
+
+/*styles pour les cards processus*/
 .processusCard {
     background: #ffffff;
     border: 1px solid rgba(154, 154, 154, 0.1);
