@@ -37,7 +37,7 @@
 
 .statsGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   margin-bottom: 2rem;
 }
@@ -206,7 +206,22 @@
   color: #9ca3af;
 }
 .textarea {
+  padding: 12px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background-color: white;
+  min-height: 100px;
   width: 100%;
+}
+.textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+.textarea::placeholder {
+  color: #9ca3af;
 }
 .selectContainer {
   position: relative;

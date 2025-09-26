@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Users, Mail, Calendar, Shield, X, RefreshCcw, Plus } from "lucide-react";
 import { useState } from "react";
-import styles from "@/styles/utilisateurs.module.css";
+import styles from "@/styles/processus.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import MyButton from "@/components/myButtonComponent";
 import { CardProcessus } from "@/components/MycardComponent";
