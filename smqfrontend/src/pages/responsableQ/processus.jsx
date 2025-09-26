@@ -172,6 +172,10 @@ export default function Utilisateurs() {
                                                 </select>
                                             </div>
                                         </div>
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="description" className={styles.label}>Description du processus</label>
+                                            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea} required></textarea>
+                                        </div>
 
                                         <div className={styles.formActions}>
                                             <button type="button" onClick={closeModal} className={styles.cancelButton}>Annuler</button>
