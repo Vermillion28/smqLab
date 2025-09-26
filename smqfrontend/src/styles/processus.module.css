@@ -38,7 +38,7 @@
   .statsGrid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 2rem;
     margin-bottom: 2rem;
   }
   
@@ -100,117 +100,6 @@
     align-items: center;
     gap: 0.75rem;
   }
-  
-  /*
-  .usersList {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-  }
-  
-  .userCard {
-      border: 1px solid var(--dashboard-border);
-      border-radius: 0.5rem;
-      padding: 1rem;
-      transition: box-shadow 0.2s;
-  }
-  
-  .userCard:hover {
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  }
-  
-  .userHeader {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 0.75rem;
-  }
-  
-  .userNameSection {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-  }
-  
-  .userName {
-      font-weight: 600;
-      color: var(--foreground);
-  }
-  
-  .activeStatus {
-      background-color: #dcfce7;
-      color: #166534;
-  }
-  
-  .inactiveStatus {
-      background-color: #f3f4f6;
-      color: #374151;
-  }
-  
-  .userDepartment {
-      font-size: 0.875rem;
-      color: var(--muted-foreground);
-  }
-  
-  .userDetails {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1rem;
-      margin-bottom: 0.75rem;
-  }
-  
-  @media (min-width: 768px) {
-      .userDetails {
-          grid-template-columns: repeat(2, 1fr);
-      }
-  }
-  
-  .userDetail {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: var(--muted-foreground);
-  }
-  
-  .detailIcon {
-      height: 1rem;
-      width: 1rem;
-  }
-  
-  .detailText {
-      font-size: 0.875rem;
-      color: var(--muted-foreground);
-  }
-  
-  .userRole {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.75rem;
-  }
-  
-  .roleIcon {
-      height: 1rem;
-      width: 1rem;
-      color: var(--muted-foreground);
-  }
-  
-  .roleText {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: var(--foreground);
-  }
-  
-  .permissions {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-  }
-  
-  .permissionBadge {
-      font-size: 0.75rem;
-  } */
   
   /* Styles pour le modal */
   .modalOverlay {
