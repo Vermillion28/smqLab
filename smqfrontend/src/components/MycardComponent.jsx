@@ -25,24 +25,30 @@ function CardFeatures({ chiffre, chiffreH2, title, description }) {
     );
 };
 
-function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, userStatusColor, onEdit, onDelete, userId }) {
+function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, userStatusColor, onEdit, onDelete }) {
     return (
         <div className={styles.userCard}>
             <div>
-                <h2><span><User size={20} strokeWidth={3} />{userName} <span className={`${styles.statusBadge} ${userStatusColor}`}>{userStatus}</span></span></h2>
+                <h2>
+                    <span>
+                        <User size={20} strokeWidth={3} />{userName}
+                        <span className={`${styles.statusBadge} ${userStatusColor}`}>{userStatus}</span>
+                    </span>
+                </h2>
                 <p><span><Mail size={16} strokeWidth={1} />{userEmail}</span></p>
             </div>
             <div>
                 <h3><span><Building2 size={20} strokeWidth={1} />{userDepartment}</span></h3>
-                <p><span> <Shield size={20} strokeWidth={1} />{userRole}</span></p>
+                <p><span><Shield size={20} strokeWidth={1} />{userRole}</span></p>
             </div>
             <div className={styles.userCardButtons}>
-                <Button size="lg" variant="outline" color="primary" onClick={() => onEdit(userId)}><SquarePen size={16} strokeWidth={1} />Modifier</Button>
-                <Button size="lg" variant="destructive" onClick={() => onDelete(userId)}>Supprimer</Button>
+                <Button size="lg" variant="outline" color="primary" onClick={onEdit}>Modifier</Button>
+                <Button size="lg" variant="destructive" onClick={onDelete}>Supprimer</Button>
             </div>
         </div>
     );
 }
+
 
 function CardProcessus({processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
