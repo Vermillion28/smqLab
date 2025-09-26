@@ -243,18 +243,20 @@ export default function Utilisateurs() {
             <h1 className={styles.usersListTitle}>Liste des Utilisateurs</h1>
             <div className={styles.usersGrid}>
               {users.map((user) => (
-                <CardUsers
-                  key={user.id}
-                  userName={user.name}
-                  userEmail={user.email}
-                  userRole={user.role}
-                  userDepartment={user.department || "-"}
-                  userStatus={user.password_set ? "Actif" : "En attente"}
-                  userStatusColor={getStatusColor(user.password_set ? "Actif" : "En attente")}
-                  onEdit={() => openEditModal(user)}
-                  onDelete={() => handleDeleteUser(user.id)}
-                />
-              ))}
+    <CardUsers
+        key={user.id}
+        userId={user.id} // <-- c'est ici
+        userName={user.name}
+        userEmail={user.email}
+        userRole={user.role}
+        userDepartment={user.department}
+        userStatus={user.password_set ? "Actif" : "En attente"}
+        userStatusColor={getStatusColor(user.password_set ? "Actif" : "En attente")}
+        onEdit={openEditModal}
+        onDelete={handleDeleteUser}
+    />
+))}
+
             </div>
           </div>
         </div>

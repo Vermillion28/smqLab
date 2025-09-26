@@ -25,25 +25,31 @@ function CardFeatures({ chiffre, chiffreH2, title, description }) {
     );
 };
 
-function CardUsers({ userName, userEmail, userRole, userDepartment, userStatus, userStatusColor, onEdit, onDelete }) {
+function CardUsers({ userId, userName, userEmail, userRole, userDepartment, userStatus, userStatusColor, onEdit, onDelete }) {
     return (
         <div className={styles.userCard}>
             <div>
                 <h2>
                     <span>
-                        <User size={20} strokeWidth={3} />{userName}
+                        <User size={20} strokeWidth={3} /> {userName}
                         <span className={`${styles.statusBadge} ${userStatusColor}`}>{userStatus}</span>
                     </span>
                 </h2>
-                <p><span><Mail size={16} strokeWidth={1} />{userEmail}</span></p>
+                <p><span><Mail size={16} strokeWidth={1} /> {userEmail}</span></p>
             </div>
             <div>
-                <h3><span><Building2 size={20} strokeWidth={1} />{userDepartment}</span></h3>
-                <p><span><Shield size={20} strokeWidth={1} />{userRole}</span></p>
+                <h3><span><Building2 size={20} strokeWidth={1} /> {userDepartment || "-"}</span></h3>
+                <p><span><Shield size={20} strokeWidth={1} /> {userRole}</span></p>
             </div>
             <div className={styles.userCardButtons}>
-                <Button size="lg" className={styles.editButtonUsers} onClick={() => onEdit(userId)}><SquarePen size={16} strokeWidth={1} />Modifier</Button>
-                <Button size="lg" className={styles.deleteButtonUsers} onClick={() => onDelete(userId)}>Supprimer</Button>
+                {/* On passe l'identifiant réel de l'utilisateur */}
+                <Button size="lg" className={styles.editButtonUsers} onClick={() => onEdit({ id: userId, name: userName, email: userEmail, role: userRole, department: userDepartment })}>
+                    <SquarePen size={16} strokeWidth={1} />Modifier
+                </Button>
+
+                <Button size="lg" className={styles.deleteButtonUsers} onClick={() => onDelete(userId)}>
+                    Supprimer
+                </Button>
             </div>
         </div>
     );
