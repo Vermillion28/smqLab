@@ -280,7 +280,60 @@
 .processusProgress {
     margin-top: 1rem;
     height: 10px;
+    background-color: #39be6c;
 }
 .processusProgress[value] {
-    background-color: #39be6c;
+    color: #39be6c;
+}
+
+.menuContainer {
+    position: relative;
+    display: inline-block;
+}
+.menuButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    color: #666;
+}
+.menuButtonHover {
+    background-color: #f5f5f5;
+}
+.dropdownMenu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 140px;
+    z-index: 1000;
+    overflow: hidden;
+}
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    transition: background-color 0.2s;
+    color: #333;
+}
+.menuItemHover {
+    background-color: #f5f5f5;
+}
+.deleteMenuItem {
+    color: #dc3545;
 }
