@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/cardComponent.module.css";
-import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2 } from "lucide-react";
+import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
@@ -56,21 +57,25 @@ function CardUsers({ userId, userName, userEmail, userRole, userDepartment, user
 }
 
 
-function CardProcessus({processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}){
+function CardProcessus({ processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-/* Fonctions de gestion du menu */
-    function handleMenuClick(){
+    const router = useRouter();
+    /* Fonctions de gestion du menu */
+    function handleMenuClick() {
         setIsMenuOpen(!isMenuOpen);
     };
-    function handleEdit(){
+    function handleEdit() {
         setIsMenuOpen(false);
         onEdit(processusId);
     };
 
-    function handleDelete(){
+    function handleDelete() {
         setIsMenuOpen(false);
         onDelete(processusId);
+    };
+    function handleSeeMore() {
+        setIsMenuOpen(false);
+        router.push(`/responsableQ/FIP/${processusId}`)
     };
 
     useEffect(() => {
@@ -80,7 +85,7 @@ function CardProcessus({processusName, processusDescription, processusStatus, pr
                 setIsMenuOpen(false);
             }
         };
-    
+
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
     }, [isMenuOpen]);
@@ -104,16 +109,19 @@ function CardProcessus({processusName, processusDescription, processusStatus, pr
                 </div>
                 <div className={styles.menuContainer}>
                     <button className={styles.menuButton} onClick={handleMenuClick} onMouseEnter={(e) => {
-                            if (!isMenuOpen) e.target.style.backgroundColor = '#f5f5f5';
-                        }} onMouseLeave={(e) => {
-                            if (!isMenuOpen) e.target.style.backgroundColor = 'transparent';
-                        }}>
+                        if (!isMenuOpen) e.target.style.backgroundColor = '#f5f5f5';
+                    }} onMouseLeave={(e) => {
+                        if (!isMenuOpen) e.target.style.backgroundColor = 'transparent';
+                    }}>
                         <Ellipsis size={20} />
                     </button>
 
                     {isMenuOpen && (
                         <div className={styles.dropdownMenu}>
-                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'}onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                            <button className={styles.menuItem} onClick={handleSeeMore} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Eye size={16} />Voir plus
+                            </button>
+                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
                                 <SquarePen size={16} />Modifier
                             </button>
                             <button className={styles.menuItem + ' ' + styles.deleteMenuItem} onClick={handleDelete} onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
