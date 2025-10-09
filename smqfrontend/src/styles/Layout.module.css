@@ -10,6 +10,17 @@
   left: 0;
 }
 
+.CollabSidebar {
+  background-color: #163f97d8;
+  width: 16rem;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
 .mainNav {
   padding: 1.5rem 1rem;
   flex: 1 1 0%;

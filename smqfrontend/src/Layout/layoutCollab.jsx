@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 // import { Toaster } from "../components/ui/toaster";
-import RProcessusSidebar from "@/components/RProcessusSidebar";
+import CollabSidebar from "@/components/collabsidebar";
 import styles from "@/styles/Layout.module.css";
 
-const LayoutRProcessus = ({ children }) => {
+const LayoutCollab = ({ children }) => {
     const router = useRouter();
 
     const handleNavigation = (route) => {
@@ -12,11 +12,11 @@ const LayoutRProcessus = ({ children }) => {
 
     return(
         <div className={styles.layout}>
-            <RProcessusSidebar />
+            <CollabSidebar />
             <div className={styles.layoutContent}>
                 {children}
             </div>
         </div>
     )
 }
-export default LayoutRProcessus;
+export default LayoutCollab;

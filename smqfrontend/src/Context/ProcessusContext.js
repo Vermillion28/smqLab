@@ -1,34 +1,10 @@
 import { createContext, useContext, useState } from 'react';
+import { processusDataInitial } from '../pages/responsableQ/dataProcessus';
 
 const ProcessusContext = createContext();
 
-export const processusData = [
-    {
-        id: 1,
-        name: "Controle Qualité Produits",
-        description: "Processus de vérification et validation des produits finis",
-        status: "Actif",
-        author: "Marie Dubois",
-        lastUpdate: "2025-06-15",
-        documents: "5",
-        tasks: "3",
-        progressValue: 30,
-    },
-    {
-        id: 2,
-        name: "Gestion des Commandes Clients",
-        description: "Traitement des commandes depuis la réception jusqu'à la livraison",
-        status: "en cours",
-        author: "Jean Martin",
-        lastUpdate: "2025-09-15",
-        documents: "5",
-        tasks: "3",
-        progressValue: 50,
-    },
-];
-
 export function ProcessusProvider({ children }) {
-    const [processus, setProcessus] = useState(processusData);
+    const [processus, setProcessus] = useState(processusDataInitial);
 
     const getProcessusById = (id) => {
         return processus.find(p => p.id === parseInt(id));

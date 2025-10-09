@@ -1,61 +1,37 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Mail, AlertTriangle, Calendar, Shield, X, RefreshCcw, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, Mail,AlertTriangle, Calendar, Shield, X, RefreshCcw, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
 import styles from "@/styles/nonConformite.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import MyButton from "@/components/myButtonComponent";
 import { CardNC, CardProcessus } from "@/components/MycardComponent";
-import { processusDataInitial } from "./dataProcessus";
+import { processusDataInitial } from "./dataProcessus"; 
 
 const processus = processusDataInitial
-let processusOptions = [];
 
-for (let i = 0; i < processus.length; i++) {
-    processusOptions.push({ value: processus[i].name, label: processus[i].name });
-}
-
-export const nonConformite = [
+const nonConformite = [
     {
         id: 1,
-        code: "NC-001",
+        code : "NC-001",
         titre: "Défaut de qualité sur lot de production",
-        processus: processus[0].name,
+        processus : processus[0].name,
         description: "Problème identifié sur la ligne de production A avec non-respect des spécifications",
         severite: "Majeure",
         author: "Marie Dubois",
         date: "2025-09-28",
         NCstatus: "Actif",
-        cause_action: [
-            {
-                id_cause: 1,
-                cause: "Cause 1",
-                action: "Action 1",
-            },
-            {
-                id_cause: 2,
-                cause: "Cause 2",
-                action: "Action 2",
-            }
-        ]
     },
     {
         id: 2,
-        code: "NC-002",
+        code : "NC-002",
         titre: "Non Conformité 2",
-        processus: processus[1].name,
+        processus : processus[1].name,
         description: "Description de la non conformité 2",
         severite: "Majeure",
         author: "Jean Martin",
         date: "2023-01-02",
         NCstatus: "Inactif",
-        cause_action: [
-            {
-                id_cause: 1,
-                cause: "Cause 1",
-                action: "Action 1",
-            },
-        ]
     },
 ];
 
@@ -142,9 +118,6 @@ export default function NonConofrmite() {
     const goToPage = (page) => {
         setCurrentPage(page);
     };
-    // for (let i = 0; i < processus.length; i++) {
-    //     processusOptions.push({ value: processus[i].name, label: processus[i].name });
-    // }
 
     return (
         <LayoutRQ>
@@ -195,7 +168,7 @@ export default function NonConofrmite() {
                         <div className={styles.searchBar}>
                             <div className={styles.searchInputWrapper}>
                                 <Search size={18} className={styles.searchIcon} />
-                                <input type="text" placeholder="Rechercher une non conformité..." value={searchQuery} onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)} className={styles.searchInput} />
+                                <input type="text" placeholder="Rechercher une non conformité..." value={searchQuery} onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)} className={styles.searchInput}/>
                             </div>
                         </div>
 
@@ -290,28 +263,26 @@ export default function NonConofrmite() {
                                 </CardHeader>
                                 <CardContent>
                                     <form onSubmit={handleSubmit} className={styles.form}>
-                                        <div className={styles.topData}>
-                                            <div className={styles.formGroup}>
-                                                <label htmlFor="name" className={styles.label}>Code </label>
-                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrer un code" required />
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label htmlFor="name" className={styles.label}>Titre de la non conformité</label>
-                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrez le titre de la non conformité" required />
-                                            </div>
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="name" className={styles.label}>Code </label>
+                                            <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrer un code" required />
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label htmlFor="name" className={styles.label}>Titre de la non conformité</label>
+                                            <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrez le titre de la non conformité" required />
                                         </div>
 
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="processus" className={styles.label}>Processus affecté</label>
+                                        {/* <div className={styles.formGroup}>
+                                            <label htmlFor="role" className={styles.label}>Responsable du processus</label>
                                             <div className={styles.selectContainer}>
-                                                <select id="processus" name="processus" value={formData.processus} onChange={handleInputChange} className={styles.select} required>
-                                                    <option value="">Sélectionner un processus</option>
-                                                    {processusOptions.map((option) => (
+                                                <select id="role" name="role" value={formData.role} onChange={handleInputChange} className={styles.select} required>
+                                                    <option value="">Sélectionner un responsable</option>
+                                                    {responsableOptions.map((option) => (
                                                         <option key={option.value} value={option.value}>{option.label}</option>
                                                     ))}
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div> */}
                                         <div className={styles.formGroup}>
                                             <label htmlFor="description" className={styles.label}>Description de la non conformité</label>
                                             <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea} required></textarea>

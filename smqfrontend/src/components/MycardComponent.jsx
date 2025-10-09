@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/cardComponent.module.css";
-import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2, Eye } from "lucide-react";
+import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2, Eye, AlertTriangle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 function CardIndex({ Icone, title, description }) {
     return (
@@ -57,7 +58,7 @@ function CardUsers({ userId, userName, userEmail, userRole, userDepartment, user
 }
 
 
-function CardProcessus({ processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId}) {
+function CardProcessus({ processusName, processusDescription, processusStatus, processusAuthor, lastUpdate, documents, tasks, progressValue, onEdit, onDelete, processusId }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const router = useRouter();
     /* Fonctions de gestion du menu */
@@ -148,6 +149,93 @@ function CardProcessus({ processusName, processusDescription, processusStatus, p
     );
 }
 
+function CardNC({ nonConformiteId, codeNC, titre, processus, description, severite, author, date, NCstatus }) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const router = useRouter();
+    /* Fonctions de gestion du menu */
+    function handleMenuClick() {
+        setIsMenuOpen(!isMenuOpen);
+    };
+    function handleEdit() {
+        setIsMenuOpen(false);
+        onEdit(nonConformiteId);
+    };
+
+    function handleDelete() {
+        setIsMenuOpen(false);
+        onDelete(nonConformiteId);
+    };
+    function handleSeeMore() {
+        setIsMenuOpen(false);
+        router.push(`/responsableQ/NC/${nonConformiteId}`)
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+
+            if (isMenuOpen && !event.target.closest('[class*="menuContainer"]')) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isMenuOpen]);
+    return (
+        <div className={styles.cardNC}>
+            <div className={styles.card_ncTop}>
+                <div>
+                    <div className={styles.h2}>
+                        <h2>{codeNC}</h2>
+                        <span className={`${styles.statusBadge} ${NCstatus === "Actif" ? styles.activeStatus : styles.inactiveStatus}`}>
+                            {NCstatus}
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <Badge className={styles.badge}>{processus}</Badge>
+                </div>
+            </div>
+
+            <div className={styles.card_ncBottom}>
+                <div>
+                    <h2>{titre}</h2>
+                    <p className={styles.description}>{description}</p>
+                    <div className={styles.detailsContainer}>
+                        <p className={styles.details}><User size={16} style={{margin: '2px 5px 0 0'}}/> Auteur : {author}</p>
+                        <p className={styles.details}><AlertTriangle size={16} style={{margin: '2px 5px 0 0'}}/> Severité : {severite}</p>
+                        <p className={styles.details}><Calendar size={16} style={{margin: '2px 5px 0 0'}}/> Date de déclaration : {date}</p>
+                    </div>
+                </div>
+
+                <div className={styles.menuContainer}>
+                    <button className={styles.menuButton} onClick={handleMenuClick} onMouseEnter={(e) => {
+                        if (!isMenuOpen) e.target.style.backgroundColor = '#f5f5f5';
+                    }} onMouseLeave={(e) => {
+                        if (!isMenuOpen) e.target.style.backgroundColor = 'transparent';
+                    }}>
+                        <Ellipsis size={20} />
+                    </button>
+
+                    {isMenuOpen && (
+                        <div className={styles.dropdownMenuNC}>
+                            <button className={styles.menuItem} onClick={handleSeeMore} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Eye size={16} />Voir plus
+                            </button>
+                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <SquarePen size={16} />Modifier
+                            </button>
+                            <button className={styles.menuItem + ' ' + styles.deleteMenuItem} onClick={handleDelete} onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Trash2 size={16} />Supprimer
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
 
 
-export { CardIndex, CardFeatures, CardUsers, CardProcessus };
+
+export { CardIndex, CardFeatures, CardUsers, CardProcessus, CardNC };
