@@ -3,55 +3,77 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ProcessusController;
+use App\Http\Controllers\Api\NonConformityController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
+| Toutes les routes de l'application passent par ici.
+| On distingue les routes publiques (login/register)
+| des routes protégées (auth:sanctum).
 |
 */
-//Ici on retoune une seule chose
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
-//Inscription
+// ---------------------------
+// 🔓 Routes publiques
+// ---------------------------
 Route::post('/register', [UserController::class, 'register']);
-
-//Authentification d'un utilisateur
 Route::post('/login', [UserController::class , 'login']);
-
-//Une route pour définir le mot de passe
 Route::post('/set-password', [UserController::class, 'setPassword']);
 
+// ---------------------------
+// 🔐 Routes protégées
+// ---------------------------
+Route::middleware('auth:sanctum')->group(function() {
 
-//ici on va retourner un groupe de fonction(Pour les routes protégées)
-Route::middleware('auth:sanctum')->group(function(){
-
-
-    //Pour se déconnecter
+    // Déconnexion
     Route::post('/logout', [UserController::class , 'logout']);
 
-    //Routourner l'utilisateur actuellemnt connecté
+    // Utilisateur connecté
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    // Seul l’admin peut créer d’autres utilisateurs
+    // Gestion des utilisateurs (admin)
     Route::post('/create-user', [UserController::class, 'createUser']);
-
-    // Modifier rôle d’un utilisateur
     Route::put('/users/{id}/role', [UserController::class, 'updateUserRole']);
-
-    // Supprimer un utilisateur
     Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-
-    // Pour récupérer tous les utilisateurs 
     Route::get('/users', [UserController::class, 'getAllUsers']);
+
+    // ---------------------------
+    // ⚙️ Gestion des processus
+    // ---------------------------
+    Route::get('/processes', [ProcessusController::class, 'index']); // tous les rôles peuvent consulter
+
+    // Routes admin seulement
+    Route::middleware('isAdmin')->group(function () {
+        Route::post('/processes', [ProcessusController::class, 'store']);
+        Route::put('/processes/{id}', [ProcessusController::class, 'update']);
+        Route::delete('/processes/{id}', [ProcessusController::class, 'destroy']);
+    });
+
+    // ---------------------------
+    // 🔹 Récupérer les responsables
+    // ---------------------------
+    Route::get('/responsables', function () {
+        return \App\Models\User::whereIn('role', ['RESPONSABLE', 'CO_RESPONSABLE'])
+                                ->get(['id', 'name', 'email']);
+    })->middleware('isAdmin');
+
+    // ---------------------------
+    // 📝 Gestion des non-conformités
+    // ---------------------------
+    Route::get('/non-conformities', [NonConformityController::class, 'index']);
+    Route::post('/non-conformities', [NonConformityController::class, 'store']);
+    Route::get('/non-conformities/{id}', [NonConformityController::class, 'show']);
+    Route::put('/non-conformities/{id}', [NonConformityController::class, 'update']);
+    Route::delete('/non-conformities/{id}', [NonConformityController::class, 'destroy']);
+
+    //Voir un processus
+    Route::get('/processes/{id}', [ProcessusController::class, 'show']); 
 
 
 });
