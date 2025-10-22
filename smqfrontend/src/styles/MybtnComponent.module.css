@@ -15,3 +15,74 @@
     transform: scale(1.02);
 }
 
+/* .dropdownContainer {
+    position: relative;
+    display: inline-block;
+} */
+
+.dropdownWrapper {
+    display: inline-block;
+    position: relative;
+}
+
+.dropdownContainer {
+    position: relative;
+    display: inline-block;
+}
+
+.myButton {
+    padding: 10px 20px;
+    background-color: #0051ff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    z-index: 1;
+    position: relative;
+}
+
+.myButton:hover {
+    background-color: #0056b3;
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999; /* Très élevé */
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.menuContent {
+    padding: 0;
+}
+
+.dropdownItem {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s;
+    color: #333;
+}
+
+.dropdownItem:hover {
+    background-color: rgb(255, 210, 210);
+    color: black;
+}
+
+.dropdownItem:last-child {
+    border-bottom: none;
+}
+
+/* Assure que le menu est au-dessus de tout */
+/* :global(body) {
+    position: relative;
+} */
+

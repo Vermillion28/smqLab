@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/cardComponent.module.css";
-import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2, Eye, AlertTriangle, Calendar } from "lucide-react";
+import { Mail, User, Building2, Shield, Ellipsis, SquarePen, Trash2, Eye, AlertTriangle, Calendar, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,9 @@ function CardFeatures({ chiffre, chiffreH2, title, description }) {
 function CardUsers({ userId, userName, userEmail, userRole, userDepartment, userStatus, userStatusColor, onEdit, onDelete }) {
     return (
         <div className={styles.userCard}>
-            <div>
+
+
+            {/* <div>
                 <h2>
                     <span>
                         <User size={20} strokeWidth={3} /> {userName}
@@ -38,6 +40,20 @@ function CardUsers({ userId, userName, userEmail, userRole, userDepartment, user
                     </span>
                 </h2>
                 <p><span><Mail size={16} strokeWidth={1} /> {userEmail}</span></p>
+            </div> */}
+
+            <div>
+                <div className={styles.processusCardTitle}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: '400', color: '#000000', paddingBottom: '5px', margin: 0 }}>
+                        {userName}
+                    </h2>
+                    <span className={styles.statusBadge + ' ' + (userStatus === "Actif" ? styles.activeStatus : styles.inactiveStatus)}>
+                        {userStatus}
+                    </span>
+                </div>
+                <p style={{ fontSize: '0.8rem', color: '#616060', lineHeight: '1.2', fontWeight: '300', margin: 0 }}>
+                    <Mail size={16} strokeWidth={1} /> {userEmail}
+                </p>
             </div>
             <div>
                 <h3><span><Building2 size={20} strokeWidth={1} /> {userDepartment || "-"}</span></h3>
@@ -187,7 +203,7 @@ function CardNC({ nonConformiteId, codeNC, titre, processus, description, severi
                 <div>
                     <div className={styles.h2}>
                         <h2>{codeNC}</h2>
-                        <span className={`${styles.statusBadge} ${NCstatus === "Actif" ? styles.activeStatus : styles.inactiveStatus}`}>
+                        <span className={styles.statusBadge + ' ' + (NCstatus === "Actif" ? styles.activeStatus : styles.inactiveStatus)}>
                             {NCstatus}
                         </span>
                     </div>
@@ -202,9 +218,9 @@ function CardNC({ nonConformiteId, codeNC, titre, processus, description, severi
                     <h2>{titre}</h2>
                     <p className={styles.description}>{description}</p>
                     <div className={styles.detailsContainer}>
-                        <p className={styles.details}><User size={16} style={{margin: '2px 5px 0 0'}}/> Auteur : {author}</p>
-                        <p className={styles.details}><AlertTriangle size={16} style={{margin: '2px 5px 0 0'}}/> Severité : {severite}</p>
-                        <p className={styles.details}><Calendar size={16} style={{margin: '2px 5px 0 0'}}/> Date de déclaration : {date}</p>
+                        <p className={styles.details}><User size={16} style={{ margin: '2px 5px 0 0' }} /> Auteur : {author}</p>
+                        <p className={styles.details}><AlertTriangle size={16} style={{ margin: '2px 5px 0 0' }} /> Severité : {severite}</p>
+                        <p className={styles.details}><Calendar size={16} style={{ margin: '2px 5px 0 0' }} /> Date de déclaration : {date}</p>
                     </div>
                 </div>
 
@@ -236,6 +252,83 @@ function CardNC({ nonConformiteId, codeNC, titre, processus, description, severi
     );
 }
 
+function DocCard({ DocId, codeDoc, type, titre, description, author, date }) {
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const router = useRouter();
+    /* Fonctions de gestion du menu */
+    function handleMenuClick() {
+        setIsMenuOpen(!isMenuOpen);
+    };
+    function handleEdit() {
+        setIsMenuOpen(false);
+        onEdit(DocId);
+    };
+
+    function handleDelete() {
+        setIsMenuOpen(false);
+        onDelete(nonConformiteId);
+    };
+    function handleSeeMore() {
+        setIsMenuOpen(false);
+        router.push(`/responsableQ/NC/${nonConformiteId}`)
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+
+            if (isMenuOpen && !event.target.closest('[class*="menuContainer"]')) {
+                setIsMenuOpen(false);
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isMenuOpen]);
+
+    return (
+        <div className={styles.cardDoc}>
+            <div className={styles.cardDocTop}>
+                <div>
+                    <h2>{type}-{codeDoc}</h2>
+                </div>
+                <div className={styles.menuContainer}>
+                    <button className={styles.menuButton} onClick={handleMenuClick} onMouseEnter={(e) => {
+                        if (!isMenuOpen) e.target.style.backgroundColor = '#f5f5f5';
+                    }} onMouseLeave={(e) => {
+                        if (!isMenuOpen) e.target.style.backgroundColor = 'transparent';
+                    }}>
+                        <Ellipsis size={20} />
+                    </button>
+
+                    {isMenuOpen && (
+                        <div className={styles.dropdownMenuNC}>
+                            <button className={styles.menuItem} onClick={handleSeeMore} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Eye size={16} />Voir plus
+                            </button>
+                            <button className={styles.menuItem} onClick={handleSeeMore} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Download size={16} />Télécharger
+                            </button>
+                            <button className={styles.menuItem} onClick={handleEdit} onMouseEnter={(e) => e.target.style.backgroundColor = '#f5f5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <SquarePen size={16} />Modifier
+                            </button>
+                            <button className={styles.menuItem + ' ' + styles.deleteMenuItem} onClick={handleDelete} onMouseEnter={(e) => e.target.style.backgroundColor = '#fff5f5'} onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}>
+                                <Trash2 size={16} />Supprimer
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            <h2>{titre}</h2>
+            <p className={styles.description}>{description}</p>
+            <div className={styles.cardDocBottom}>
+                <p><User size={16} style={{ margin: '2px 5px 0 0' }} />{author}</p>
+                <p><Calendar size={16} style={{ margin: '2px 5px 0 0' }} />Dernière modification : {date}</p>
+            </div>
+        </div>
+    );
+}
 
 
-export { CardIndex, CardFeatures, CardUsers, CardProcessus, CardNC };
+
+export { CardIndex, CardFeatures, CardUsers, CardProcessus, CardNC, DocCard };

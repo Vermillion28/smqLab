@@ -598,3 +598,85 @@
       font-size: 13px;
   }
 }
+
+
+.fileContainer {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.printableArea {
+  padding: 20px;
+  border: 1px solid #ddd;
+  background: white;
+}
+
+.detailsSection {
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.detailsSection h2 {
+  color: #333;
+  border-bottom: 2px solid #007acc;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.detailsSection ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.detailsSection li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.downloadButton {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #007acc;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.downloadButton:hover {
+  background-color: #005a9e;
+}
+
+/* Forcer les couleurs pour le PDF */
+.printableArea,
+.printableArea * {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
+.printableArea h1,
+.printableArea h2,
+.printableArea strong {
+  color: #1a1a1a !important;
+}
+
+.detailsSection {
+  border: 1px solid #cccccc !important;
+  background: #f9f9f9 !important;
+}

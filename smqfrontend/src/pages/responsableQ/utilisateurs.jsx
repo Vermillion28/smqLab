@@ -4,7 +4,7 @@ import { Users, Mail, Calendar, Shield, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import styles from "@/styles/utilisateurs.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
-import MyButton from "@/components/myButtonComponent";
+import {MyButton} from "@/components/myButtonComponent";
 import { CardUsers } from "@/components/MycardComponent";
 
 // Options de rôle pour la création d'un utilisateur

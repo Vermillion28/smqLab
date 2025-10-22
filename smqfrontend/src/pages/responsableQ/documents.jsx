@@ -1,21 +1,25 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Mail, Calendar, Shield, X, RefreshCcw, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, Mail, AlertTriangle, Calendar, Shield, X, File, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo } from "react";
-import styles from "@/styles/processus.module.css";
+import styles from "@/styles/document.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
-import {MyButton} from "@/components/myButtonComponent";
-import { CardProcessus } from "@/components/MycardComponent";
-import { processusDataInitial } from "./dataProcessus";
-
-const processus = processusDataInitial;
+import {MyButton, MyDocButton} from "@/components/myButtonComponent";
+import { CardNC, CardProcessus, DocCard } from "@/components/MycardComponent";
 
 const responsableOptions = [
     { value: "Marie Dubois", label: "Marie Dubois" },
     { value: "Jean Martin", label: "Jean Martin" },
 ];
+export const documentsData = [
+    { id: 1, code: "001", titre: "Document 1", type: "FP", description: "Description du document 1", author: "Marie Dubois", date: "2023-06-01" },
+    { id: 2, code: "002", titre: "Document 2", type: "FP", description: "Description du document 2", author: "Jean Martin", date: "2023-06-02" },
+    { id: 3, code: "003", titre: "Document 3", type: "FP", description: "Description du document 3", author: "Marie Dubois", date: "2023-06-03" },
+    { id: 4, code: "004", titre: "Document 4", type: "FP", description: "Description du document 4", author: "Jean Martin", date: "2023-06-04" },
+    { id: 5, code: "005", titre: "Document 5", type: "FP", description: "Description du document 5", author: "Marie Dubois", date: "2023-06-05" },
+];
 
-export default function Processus() {
+export default function Documents() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -32,22 +36,22 @@ export default function Processus() {
     const itemsPerPage = 5;
 
     // Filtrage et recherche
-    const filteredProcessus = useMemo(() => {
-        return processus.filter(proc => {
-            const matchesSearch = proc.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                proc.description.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesStatus = statusFilter === "tous" || proc.status.toLowerCase() === statusFilter.toLowerCase();
-            const matchesAuthor = authorFilter === "tous" || proc.author === authorFilter;
+    const filteredDocuments = useMemo(() => {
+        return documentsData.filter(doc => {
+            const matchesSearch = doc.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                doc.description.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesStatus = statusFilter === "tous" || doc.severite.toLowerCase() === statusFilter.toLowerCase();
+            const matchesAuthor = authorFilter === "tous" || doc.author === authorFilter;
 
             return matchesSearch && matchesStatus && matchesAuthor;
         });
     }, [searchQuery, statusFilter, authorFilter]);
 
     // Calcul de la pagination
-    const totalPages = Math.ceil(filteredProcessus.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentProcessus = filteredProcessus.slice(startIndex, endIndex);
+    const currentDocuments = filteredDocuments.slice(startIndex, endIndex);
 
     // Réinitialiser la page lors du changement de filtres
     const handleFilterChange = (filterSetter) => (value) => {
@@ -100,11 +104,11 @@ export default function Processus() {
                 <div className={styles.content}>
                     <div className={styles.header}>
                         <div>
-                            <h1 className={styles.title}> <RefreshCcw className={styles.titleIcon} />Gestion des Processus</h1>
-                            <p className={styles.subtitle}>Gérer et suivez tous vos processus métiers</p>
+                            <h1 className={styles.title}> <File className={styles.titleIcon} />Documents</h1>
+                            <p className={styles.subtitle}>Gestion documentaire du système qualité</p>
                         </div>
                         <div>
-                            <MyButton text="Créer un Nouveau processus" onClick={() => setIsModalOpen(true)} />
+                            <MyDocButton text="Créer un Document" onClick={() => setIsModalOpen(true)} />
                         </div>
                     </div>
 
@@ -112,7 +116,7 @@ export default function Processus() {
                     <div className={styles.statsGrid}>
                         <Card className={styles.statsCard}>
                             <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Processus Trimestriel</CardTitle>
+                                <CardTitle className={styles.statsCardTitle}>Total des Documents</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className={styles.statsValue}>12</div>
@@ -121,7 +125,7 @@ export default function Processus() {
 
                         <Card className={styles.statsCard}>
                             <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Processus en Cours</CardTitle>
+                                <CardTitle className={styles.statsCardTitle}>Documents en Cours</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className={`${styles.statsValue} ${styles.activeStats}`}>7</div>
@@ -130,7 +134,7 @@ export default function Processus() {
 
                         <Card className={styles.statsCard}>
                             <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Processus Terminés</CardTitle>
+                                <CardTitle className={styles.statsCardTitle}>Non Conformités Terminées</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className={`${styles.statsValue} ${styles.adminStats}`}>5</div>
@@ -143,13 +147,7 @@ export default function Processus() {
                         <div className={styles.searchBar}>
                             <div className={styles.searchInputWrapper}>
                                 <Search size={18} className={styles.searchIcon} />
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher un processus..."
-                                    value={searchQuery}
-                                    onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)}
-                                    className={styles.searchInput}
-                                />
+                                <input type="text" placeholder="Rechercher une non conformité..." value={searchQuery} onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)} className={styles.searchInput} />
                             </div>
                         </div>
 
@@ -159,21 +157,13 @@ export default function Processus() {
                                 Filtres:
                             </span>
 
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => handleFilterChange(setStatusFilter)(e.target.value)}
-                                className={styles.filterSelect}
-                            >
+                            <select value={statusFilter} onChange={(e) => handleFilterChange(setStatusFilter)(e.target.value)} className={styles.filterSelect}>
                                 <option value="tous">Tous les statuts</option>
                                 <option value="actif">Actif</option>
                                 <option value="en cours">En cours</option>
                             </select>
 
-                            <select
-                                value={authorFilter}
-                                onChange={(e) => handleFilterChange(setAuthorFilter)(e.target.value)}
-                                className={styles.filterSelect}
-                            >
+                            <select value={authorFilter} onChange={(e) => handleFilterChange(setAuthorFilter)(e.target.value)} className={styles.filterSelect}>
                                 <option value="tous">Tous les auteurs</option>
                                 {responsableOptions.map(option => (
                                     <option key={option.value} value={option.value}>
@@ -182,25 +172,18 @@ export default function Processus() {
                                 ))}
                             </select>
 
-                            <button
-                                onClick={resetFilters}
-                                className={styles.resetButton}
-                            >
-                                Réinitialiser
-                            </button>
+                            <button onClick={resetFilters} className={styles.resetButton}>Réinitialiser</button>
                         </div>
                     </div>
 
                     {/* Liste des processus */}
                     <div className={styles.usersList}>
-                        <h1 className={styles.usersListTitle}>
-                            Liste des Processus ({filteredProcessus.length})
-                        </h1>
+                        <h1 className={styles.usersListTitle}>Bibliotheque de Documents ({filteredDocuments.length})</h1>
                         <div className={styles.usersGrid}>
-                            {currentProcessus.length > 0 ? (
-                                currentProcessus.map((processus) => {
+                            {currentDocuments.length > 0 ? (
+                                currentDocuments.map((doc) => {
                                     return (
-                                        <CardProcessus key={processus.id} processusName={processus.name} processusDescription={processus.description} processusStatus={processus.status} processusAuthor={processus.author} lastUpdate={processus.lastUpdate} documents={processus.documents} tasks={processus.tasks} progressValue={processus.progressValue} processusId={processus.id} onEdit={handleEditProcessus} onDelete={handleDeleteProcessus} />
+                                        <DocCard key={doc.id} codeDoc={doc.code} type={doc.type} titre={doc.titre} description={doc.description} author={doc.author} date={doc.date} />
                                     );
                                 })
                             ) : (
@@ -211,39 +194,26 @@ export default function Processus() {
                         </div>
 
                         {/* Pagination */}
-                        {filteredProcessus.length > itemsPerPage && (
+                        {filteredDocuments.length > itemsPerPage && (
                             <div className={styles.pagination}>
                                 <div className={styles.paginationInfo}>
-                                    Affichage de {startIndex + 1} à {Math.min(endIndex, filteredProcessus.length)} sur {filteredProcessus.length} processus
+                                    Affichage de {startIndex + 1} à {Math.min(endIndex, filteredDocuments.length)} sur {filteredDocuments.length} processus
                                 </div>
 
                                 <div className={styles.paginationControls}>
-                                    <button
-                                        onClick={() => goToPage(currentPage - 1)}
-                                        disabled={currentPage === 1}
-                                        className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ''}`}
-                                    >
-                                        <ChevronLeft size={16} />
-                                        Précédent
+                                    <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ''}`}>
+                                        <ChevronLeft size={16} />Précédent
                                     </button>
 
                                     <div className={styles.pageNumbers}>
                                         {[...Array(totalPages)].map((_, index) => (
-                                            <button
-                                                key={index + 1}
-                                                onClick={() => goToPage(index + 1)}
-                                                className={`${styles.pageNumber} ${currentPage === index + 1 ? styles.pageNumberActive : ''}`}
-                                            >
+                                            <button key={index + 1} onClick={() => goToPage(index + 1)} className={`${styles.pageNumber} ${currentPage === index + 1 ? styles.pageNumberActive : ''}`}>
                                                 {index + 1}
                                             </button>
                                         ))}
                                     </div>
 
-                                    <button
-                                        onClick={() => goToPage(currentPage + 1)}
-                                        disabled={currentPage === totalPages}
-                                        className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ''}`}
-                                    >
+                                    <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ''}`}>
                                         Suivant
                                         <ChevronRight size={16} />
                                     </button>
@@ -254,13 +224,13 @@ export default function Processus() {
                 </div>
 
                 {/* Modal pour ajouter un processus */}
-                {isModalOpen && (
+                {/* {isModalOpen && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modal}>
                             <Card className={styles.modalCard}>
                                 <CardHeader className={styles.modalHeader}>
                                     <div className={styles.modalTitleSection}>
-                                        <CardTitle className={styles.modalTitle}>Ajouter un processus</CardTitle>
+                                        <CardTitle className={styles.modalTitle}>Déclarer une non conformité</CardTitle>
                                         <button onClick={closeModal} className={styles.closeButton}>
                                             <X size={20} />
                                         </button>
@@ -268,37 +238,43 @@ export default function Processus() {
                                 </CardHeader>
                                 <CardContent>
                                     <form onSubmit={handleSubmit} className={styles.form}>
-                                        <div className={styles.formGroup}>
-                                            <label htmlFor="name" className={styles.label}>Nom du processus</label>
-                                            <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Nom du processus" required />
+                                        <div className={styles.topData}>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="name" className={styles.label}>Code </label>
+                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrer un code" required />
+                                            </div>
+                                            <div className={styles.formGroup}>
+                                                <label htmlFor="name" className={styles.label}>Titre de la non conformité</label>
+                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrez le titre de la non conformité" required />
+                                            </div>
                                         </div>
 
                                         <div className={styles.formGroup}>
-                                            <label htmlFor="role" className={styles.label}>Responsable du processus</label>
+                                            <label htmlFor="processus" className={styles.label}>Processus affecté</label>
                                             <div className={styles.selectContainer}>
-                                                <select id="role" name="role" value={formData.role} onChange={handleInputChange} className={styles.select} required>
-                                                    <option value="">Sélectionner un responsable</option>
-                                                    {responsableOptions.map((option) => (
+                                                <select id="processus" name="processus" value={formData.processus} onChange={handleInputChange} className={styles.select} required>
+                                                    <option value="">Sélectionner un processus</option>
+                                                    {processusOptions.map((option) => (
                                                         <option key={option.value} value={option.value}>{option.label}</option>
                                                     ))}
                                                 </select>
                                             </div>
                                         </div>
                                         <div className={styles.formGroup}>
-                                            <label htmlFor="description" className={styles.label}>Description du processus</label>
+                                            <label htmlFor="description" className={styles.label}>Description de la non conformité</label>
                                             <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea} required></textarea>
                                         </div>
 
                                         <div className={styles.formActions}>
                                             <button type="button" onClick={closeModal} className={styles.cancelButton}>Annuler</button>
-                                            <button type="submit" className={styles.submitButton}>Ajouter le processus</button>
+                                            <button type="submit" className={styles.submitButton}>Ajouter le non conformité</button>
                                         </div>
                                     </form>
                                 </CardContent>
                             </Card>
                         </div>
                     </div>
-                )}
+                )} */}
             </div>
         </LayoutRQ>
     );

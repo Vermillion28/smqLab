@@ -4,7 +4,7 @@ import { Users, Mail, AlertTriangle, Calendar, Shield, X, RefreshCcw, Plus, Sear
 import { useState, useMemo } from "react";
 import styles from "@/styles/nonConformite.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
-import MyButton from "@/components/myButtonComponent";
+import {MyButton} from "@/components/myButtonComponent";
 import { CardNC, CardProcessus } from "@/components/MycardComponent";
 import { processusDataInitial } from "./dataProcessus";
 
@@ -64,7 +64,7 @@ const responsableOptions = [
     { value: "Jean Martin", label: "Jean Martin" },
 ];
 
-export default function NonConofrmite() {
+export default function NonConformite() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -142,9 +142,6 @@ export default function NonConofrmite() {
     const goToPage = (page) => {
         setCurrentPage(page);
     };
-    // for (let i = 0; i < processus.length; i++) {
-    //     processusOptions.push({ value: processus[i].name, label: processus[i].name });
-    // }
 
     return (
         <LayoutRQ>
@@ -153,7 +150,7 @@ export default function NonConofrmite() {
                     <div className={styles.header}>
                         <div>
                             <h1 className={styles.title}> <AlertTriangle className={styles.titleIcon} />Non Conformités</h1>
-                            <p className={styles.subtitle}>Gérer et suivez tous vos processus métiers</p>
+                            <p className={styles.subtitle}>Gérer les incidents et non-conformités qualité</p>
                         </div>
                         <div>
                             <MyButton text="Déclarer une Non Conformité" onClick={() => setIsModalOpen(true)} />

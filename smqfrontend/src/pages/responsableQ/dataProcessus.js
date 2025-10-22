@@ -1,81 +1,88 @@
 export const processusDataInitial = [
     {
         id: 1,
-        name: "Controle Qualité Produits",
-        description: "Processus de vérification et validation des produits finis",
+        name: "Contrôle Qualité Produits Finis",
+        description: "Processus de vérification visuelle, dimensionnelle et fonctionnelle des produits en fin de ligne d'assemblage, avant leur expédition vers le client.",
         status: "Actif",
         author: "Marie Dubois",
         copilote: "Jean Martin",
         lastUpdate: "2025-06-15",
+        dateCreation: "2024-01-10",
         documents: "5",
         tasks: "3",
         progressValue: 30,
-        type: "Management",
-        fianlité: "Assurer la gestion efficace des projets en télécoms, génie civil, énergie et logistique, depuis la préparation jusqu’à la livraison finale, en garantissant la qualité, les délais et la satisfaction des clients.",
-        champs_application: "Tous les projets menés dans les domaines Télécoms, Génie Civil, Énergie et Logistique, depuis la planification jusqu’à la livraison et le suivi post-projet",
-        objectifs: {
-            objectif1: "Préparer et planifier les projets en fonction des exigences techniques et contractuelles",
-            objectif2: "Réaliser les études techniques et valider les plans.",
-            objectif3: "Coordonner et mobiliser les ressources humaines, matérielles et financières nécessaires.",
-        },
-        exigences: {
-            exigence1: "Conformité aux normes ISO 9001",
-            exigence2: "Respect des exigences contractuelles et normatives applicables.",
-            exigence3: "Conformité aux réglementations en vigueur (BTP, Télécoms, Sécurité, Environnement).",
-        },
-        ressources_associees: {
-            ressource1: "Conformité aux normes ISO 9001",
-            ressource2: "Respect des exigences contractuelles et normatives applicables.",
-            ressource3: "Conformité aux réglementations en vigueur (BTP, Télécoms, Sécurité, Environnement).",
-        },
-        element_entres: {
-            element1: "Conformité aux normes ISO 9001",
-            element2: "Respect des exigences contractuelles et normatives applicables.",
-            element3: "Conformité aux réglementations en vigueur (BTP, Télécoms, Sécurité, Environnement).",
-        },
-        element_sortis: {
-            element1: "Conformité aux normes ISO 9001",
-            element2: "Respect des exigences contractuelles et normatives applicables.",
-            element3: "Conformité aux réglementations en vigueur (BTP, Télécoms, Sécurité, Environnement).",
-        },
-        beneficiare: {
-            beneficiare_1: "Clients",
-            beneficiare_2: "Equipe projets",
-            beneficiare_3: "Direction et partie prenante",
-        },
-        processus_amont: {
-            processus_amont_1: "Clients",
-            processus_amont_2: "Equipe projets",
-            processus_amont_3: "Direction et partie prenante",
-        },
-        processus_aval: {
-            processus_aval_1: "Clients",
-            processus_aval_2: "Equipe projets",
-            processus_aval_3: "Direction et partie prenante",
-        },
+        type: "Opérationnel",
+        finalité: "Garantir que seuls les produits conformes aux spécifications client et aux normes internes sont livrés, afin de minimiser les retours et de maintenir la satisfaction client.",
+        champs_application: "S'applique à toutes les gammes de produits finis manufacturés sur le site de production de Lyon.",
+
+        // Utilisation de tableaux pour plus de clarté et de cohérence
+        objectifs: [
+            { id: 1, libelle: "Réaliser 100% des contrôles définis dans le plan de contrôle." },
+            { id: 2, libelle: "Maintenir un taux de non-conformité inférieur à 0.5%." },
+            { id: 3, libelle: "Traiter 100% des non-conformités détectées dans les 24h." }
+        ],
+        exigences: [
+            { id: 1, libelle: "Conformité aux normes ISO 9001:2015" },
+            { id: 2, libelle: "Respect du plan de contrôle qualité REF-PC-045" },
+            { id: 3, libelle: "Spécifications techniques du produit (document ST-XXX)" }
+        ],
+        ressources_associees: [
+            { id: 1, libelle: "Poste de contrôle équipé (palpeur, caméra vision)" },
+            { id: 2, libelle: "Logiciel de saisie des résultats (SQlite)" },
+            { id: 3, libelle: "Personnel qualifié 'Contrôleur Qualité'" }
+        ],
+        element_entres: [
+            { id: 1, libelle: "Produit fini en attente de contrôle" },
+            { id: 2, libelle: "Bon de travail et gamme de contrôle" },
+            { id: 3, libelle: "Spécifications client mises à jour" }
+        ],
+        element_sortis: [
+            { id: 1, libelle: "Produit étiqueté 'Conforme' et dirigé vers l'expédition" },
+            { id: 2, libelle: "Fiche de contrôle remplie et archivée" },
+            { id: 3, libelle: "Fiche de non-conformité (le cas échéant)" }
+        ],
+        beneficiare: [
+            { id: 1, libelle: "Client final" },
+            { id: 2, libelle: "Service Commercial" },
+            { id: 3, libelle: "Direction Générale" }
+        ],
+        // Référence à d'autres processus par leur ID ou nom
+        processus_amont: [
+            { id: 2, name: "Assemblage Final" } // Référence à un autre objet processus
+        ],
+        processus_aval: [
+            { id: 3, name: "Emballage et Expédition" } // Référence à un autre objet processus
+        ],
         risque_actions: [
             {
-                risque_cle: "Retards dans l’exécution des projets",
-                action_corrective: "Planification rigoureuse et suivi des délais"
+                id: 1,
+                risque_cle: "Défaut non détecté lors du contrôle",
+                action_corrective: "Étalonnage hebdomadaire des équipements de mesure et double contrôle aléatoire"
             },
             {
-                risque_cle: "Insatisfaction client",
-                action_corrective: "Suivi qualité et gestion proactive des réclamations",
+                id: 2,
+                risque_cle: "Surcharge de l'atelier entraînant un bypass du contrôle",
+                action_corrective: "Intégration du temps de contrôle dans le temps de cycle produit. Alerte automatique si délai non respecté."
             }
         ],
         indicateur_performance: [
             {
-                indicateur: "Taux de respect des délais projets",
-                frequence: "Hebdomadaire",
-                valeur_cible: "100%",
+                id: 1,
+                indicateur: "Taux de conformité des produits",
+                frequence: "Quotidienne",
+                valeur_cible: "> 99.5%",
+                valeur_actuelle: "99.7%"
             },
             {
-                indicateur: "Taux de respect du budget projet",
-                frequence: "Mensuelle",
-                valeur_cible: "100%",
+                id: 2,
+                indicateur: "Temps de traitement moyen d'une non-conformité",
+                frequence: "Hebdomadaire",
+                valeur_cible: "< 24h",
+                valeur_actuelle: "18h"
             },
         ],
     },
+
     {
         id: 2,
         name: "Gestion des Commandes Clients",
@@ -87,4 +94,4 @@ export const processusDataInitial = [
         tasks: "3",
         progressValue: 50,
     },
-];
+]
