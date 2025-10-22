@@ -1,136 +1,129 @@
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Users, Mail, AlertTriangle, Calendar, Shield, X, RefreshCcw, Plus, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo } from "react";
+import { AlertTriangle, Search, Filter, ChevronLeft, ChevronRight, X } from "lucide-react";
 import styles from "@/styles/nonConformite.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import {MyButton} from "@/components/myButtonComponent";
-import { CardNC, CardProcessus } from "@/components/MycardComponent";
-import { processusDataInitial } from "./dataProcessus";
-
-const processus = processusDataInitial
-let processusOptions = [];
-
-for (let i = 0; i < processus.length; i++) {
-    processusOptions.push({ value: processus[i].name, label: processus[i].name });
-}
-
-export const nonConformite = [
-    {
-        id: 1,
-        code: "NC-001",
-        titre: "Défaut de qualité sur lot de production",
-        processus: processus[0].name,
-        description: "Problème identifié sur la ligne de production A avec non-respect des spécifications",
-        severite: "Majeure",
-        author: "Marie Dubois",
-        date: "2025-09-28",
-        NCstatus: "Actif",
-        cause_action: [
-            {
-                id_cause: 1,
-                cause: "Cause 1",
-                action: "Action 1",
-            },
-            {
-                id_cause: 2,
-                cause: "Cause 2",
-                action: "Action 2",
-            }
-        ]
-    },
-    {
-        id: 2,
-        code: "NC-002",
-        titre: "Non Conformité 2",
-        processus: processus[1].name,
-        description: "Description de la non conformité 2",
-        severite: "Majeure",
-        author: "Jean Martin",
-        date: "2023-01-02",
-        NCstatus: "Inactif",
-        cause_action: [
-            {
-                id_cause: 1,
-                cause: "Cause 1",
-                action: "Action 1",
-            },
-        ]
-    },
-];
-
-const responsableOptions = [
-    { value: "Marie Dubois", label: "Marie Dubois" },
-    { value: "Jean Martin", label: "Jean Martin" },
-];
+import { CardNC } from "@/components/MycardComponent";
 
 export default function NonConformite() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [nonConformites, setNonConformites] = useState([]);
+    const [processus, setProcessus] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const [formData, setFormData] = useState({
-        name: "",
-        responsable: ""
+        code: "",
+        title: "",
+        process_name: "",
+        description: ""
     });
 
-    // États pour la recherche et les filtres
+    // États pour recherche et filtres
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState("tous");
     const [authorFilter, setAuthorFilter] = useState("tous");
 
-    // États pour la pagination
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
 
-    // Filtrage et recherche
-    const filteredNC = useMemo(() => {
-        return nonConformite.filter(proc => {
-            const matchesSearch = proc.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                proc.description.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesStatus = statusFilter === "tous" || proc.severite.toLowerCase() === statusFilter.toLowerCase();
-            const matchesAuthor = authorFilter === "tous" || proc.author === authorFilter;
+    // 🔹 Charger les non-conformités
+    useEffect(() => {
+        const fetchNonConformites = async () => {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/api/non-conformities", {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setNonConformites(data.data);
+                }
+            } catch (err) {
+                console.error("Erreur de chargement des non-conformités:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-            return matchesSearch && matchesStatus && matchesAuthor;
-        });
-    }, [searchQuery, statusFilter, authorFilter]);
+        const fetchProcessus = async () => {
+            try {
+                const res = await fetch("http://127.0.0.1:8000/api/processes", {
+                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    setProcessus(data.data || []);
+                } else {
+                    setProcessus(data || []);
+                }
+            } catch (err) {
+                console.error("Erreur de chargement des processus:", err);
+            }
+        };
 
-    // Calcul de la pagination
-    const totalPages = Math.ceil(filteredNC.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentNC = filteredNC.slice(startIndex, endIndex);
+        fetchNonConformites();
+        fetchProcessus();
+    }, []);
 
-    // Réinitialiser la page lors du changement de filtres
-    const handleFilterChange = (filterSetter) => (value) => {
-        filterSetter(value);
-        setCurrentPage(1);
-    };
-
+    // 🔹 Gestion du formulaire
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Nouveau utilisateur:", formData);
-        setFormData({ name: "", responsable: "" });
-        setIsModalOpen(false);
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/non-conformities", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                alert("✅ Non-conformité créée avec succès !");
+                setIsModalOpen(false);
+                setFormData({ code: "", title: "", process_name: "", description: "" });
+                setNonConformites((prev) => [data.data, ...prev]);
+            } else {
+                alert("❌ Erreur : " + (data.message || "Impossible de créer la non-conformité"));
+                console.error(data.errors);
+            }
+        } catch (err) {
+            console.error("Erreur lors de la création:", err);
+        }
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setFormData({ name: "", responsable: "" });
+        setFormData({ code: "", title: "", process_name: "", description: "" });
     };
 
-    const handleEditProcessus = (processusId) => {
-        console.log("Modifier processus:", processusId);
-    };
+    // 🔹 Recherche et filtres
+    const filteredNC = useMemo(() => {
+        return nonConformites.filter((nc) => {
+            const searchMatch =
+                nc.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                nc.description?.toLowerCase().includes(searchQuery.toLowerCase());
+            const statusMatch =
+                statusFilter === "tous" ||
+                (nc.status && nc.status.toLowerCase() === statusFilter.toLowerCase());
+            const authorMatch =
+                authorFilter === "tous" ||
+                (nc.creator?.name && nc.creator.name === authorFilter);
+            return searchMatch && statusMatch && authorMatch;
+        });
+    }, [searchQuery, statusFilter, authorFilter, nonConformites]);
 
-    const handleDeleteProcessus = (processusId) => {
-        console.log("Supprimer processus:", processusId);
-    };
+    // Pagination
+    const totalPages = Math.ceil(filteredNC.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentNC = filteredNC.slice(startIndex, startIndex + itemsPerPage);
 
     const resetFilters = () => {
         setSearchQuery("");
@@ -147,6 +140,7 @@ export default function NonConformite() {
         <LayoutRQ>
             <div className={styles.container}>
                 <div className={styles.content}>
+                    {/* HEADER */}
                     <div className={styles.header}>
                         <div>
                             <h1 className={styles.title}> <AlertTriangle className={styles.titleIcon} />Non Conformités</h1>
@@ -157,114 +151,170 @@ export default function NonConformite() {
                         </div>
                     </div>
 
-                    {/* Stats Cards */}
+                    
+
+                    {/* STATS */}
                     <div className={styles.statsGrid}>
                         <Card className={styles.statsCard}>
-                            <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Non Conformités</CardTitle>
+                            <CardHeader>
+                                <CardTitle className={styles.statsCardTitle}>
+                                    Non Conformités
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className={styles.statsValue}>12</div>
+                                <div className={styles.statsValue}>
+                                    {nonConformites.length}
+                                </div>
                             </CardContent>
                         </Card>
 
                         <Card className={styles.statsCard}>
-                            <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Non Conformités en Cours</CardTitle>
+                            <CardHeader>
+                                <CardTitle className={styles.statsCardTitle}>
+                                    En cours
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className={`${styles.statsValue} ${styles.activeStats}`}>7</div>
+                                <div className={`${styles.statsValue} ${styles.activeStats}`}>
+                                    {Math.floor(nonConformites.length / 2)}
+                                </div>
                             </CardContent>
                         </Card>
 
                         <Card className={styles.statsCard}>
-                            <CardHeader className={styles.statsCardHeader}>
-                                <CardTitle className={styles.statsCardTitle}>Non Conformités Terminées</CardTitle>
+                            <CardHeader>
+                                <CardTitle className={styles.statsCardTitle}>
+                                    Terminées
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className={`${styles.statsValue} ${styles.adminStats}`}>5</div>
+                                <div className={`${styles.statsValue} ${styles.adminStats}`}>
+                                    {Math.floor(nonConformites.length / 2)}
+                                </div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* Section Recherche et Filtres */}
+                    {/* RECHERCHE */}
                     <div className={styles.searchFilterContainer}>
                         <div className={styles.searchBar}>
                             <div className={styles.searchInputWrapper}>
                                 <Search size={18} className={styles.searchIcon} />
-                                <input type="text" placeholder="Rechercher une non conformité..." value={searchQuery} onChange={(e) => handleFilterChange(setSearchQuery)(e.target.value)} className={styles.searchInput} />
+                                <input
+                                    type="text"
+                                    placeholder="Rechercher une non-conformité..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    className={styles.searchInput}
+                                />
                             </div>
                         </div>
 
                         <div className={styles.filterSection}>
                             <span className={styles.filterLabel}>
-                                <Filter size={16} />
-                                Filtres:
+                                <Filter size={16} /> Filtres:
                             </span>
-
-                            <select value={statusFilter} onChange={(e) => handleFilterChange(setStatusFilter)(e.target.value)} className={styles.filterSelect}>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                className={styles.filterSelect}
+                            >
                                 <option value="tous">Tous les statuts</option>
                                 <option value="actif">Actif</option>
                                 <option value="en cours">En cours</option>
                             </select>
-
-                            <select value={authorFilter} onChange={(e) => handleFilterChange(setAuthorFilter)(e.target.value)} className={styles.filterSelect}>
+                            <select
+                                value={authorFilter}
+                                onChange={(e) => setAuthorFilter(e.target.value)}
+                                className={styles.filterSelect}
+                            >
                                 <option value="tous">Tous les auteurs</option>
-                                {responsableOptions.map(option => (
-                                    <option key={option.value} value={option.value}>
-                                        {option.label}
-                                    </option>
-                                ))}
+                                {[...new Set(nonConformites.map((nc) => nc.creator?.name))].map(
+                                    (name, i) =>
+                                        name && (
+                                            <option key={i} value={name}>
+                                                {name}
+                                            </option>
+                                        )
+                                )}
                             </select>
-
                             <button onClick={resetFilters} className={styles.resetButton}>
                                 Réinitialiser
                             </button>
                         </div>
                     </div>
 
-                    {/* Liste des processus */}
+                    {/* LISTE */}
                     <div className={styles.usersList}>
                         <h1 className={styles.usersListTitle}>
-                            Liste des Nons Conformités ({filteredNC.length})
+                            Liste des Non-Conformités ({filteredNC.length})
                         </h1>
                         <div className={styles.usersGrid}>
-                            {currentNC.length > 0 ? (
-                                currentNC.map((nonConformite) => {
-                                    return (
-                                        <CardNC key={nonConformite.id} codeNC={nonConformite.code} titre={nonConformite.titre} processus={nonConformite.processus} description={nonConformite.description} severite={nonConformite.severite} author={nonConformite.author} date={nonConformite.date} NCstatus={nonConformite.NCstatus} />
-                                    );
-                                })
+                            {loading ? (
+                                <p>Chargement...</p>
+                            ) : currentNC.length > 0 ? (
+                                currentNC.map((nc) => (
+                                    <CardNC
+                                        key={nc.id}
+                                        codeNC={nc.code}
+                                        titre={nc.title}
+                                        processus={nc.process?.name}
+                                        description={nc.description}
+                                        author={nc.creator?.name || "Inconnu"}
+                                        date={new Date(nc.created_at).toLocaleDateString()}
+                                        NCstatus="Actif"
+                                    />
+                                ))
                             ) : (
                                 <div className={styles.noResults}>
-                                    Aucun processus trouvé
+                                    Aucune non-conformité trouvée
                                 </div>
                             )}
                         </div>
 
-                        {/* Pagination */}
+                        {/* PAGINATION */}
                         {filteredNC.length > itemsPerPage && (
                             <div className={styles.pagination}>
                                 <div className={styles.paginationInfo}>
-                                    Affichage de {startIndex + 1} à {Math.min(endIndex, filteredNC.length)} sur {filteredNC.length} processus
+                                    Affichage de {startIndex + 1} à{" "}
+                                    {Math.min(startIndex + itemsPerPage, filteredNC.length)} sur{" "}
+                                    {filteredNC.length}
                                 </div>
-
                                 <div className={styles.paginationControls}>
-                                    <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1} className={`${styles.paginationButton} ${currentPage === 1 ? styles.paginationButtonDisabled : ''}`}>
-                                        <ChevronLeft size={16} />Précédent
+                                    <button
+                                        onClick={() => goToPage(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className={`${styles.paginationButton} ${
+                                            currentPage === 1
+                                                ? styles.paginationButtonDisabled
+                                                : ""
+                                        }`}
+                                    >
+                                        <ChevronLeft size={16} /> Précédent
                                     </button>
-
-                                    <div className={styles.pageNumbers}>
-                                        {[...Array(totalPages)].map((_, index) => (
-                                            <button key={index + 1} onClick={() => goToPage(index + 1)} className={`${styles.pageNumber} ${currentPage === index + 1 ? styles.pageNumberActive : ''}`}>
-                                                {index + 1}
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages} className={`${styles.paginationButton} ${currentPage === totalPages ? styles.paginationButtonDisabled : ''}`}>
-                                        Suivant
-                                        <ChevronRight size={16} />
+                                    {[...Array(totalPages)].map((_, i) => (
+                                        <button
+                                            key={i + 1}
+                                            onClick={() => goToPage(i + 1)}
+                                            className={`${styles.pageNumber} ${
+                                                currentPage === i + 1
+                                                    ? styles.pageNumberActive
+                                                    : ""
+                                            }`}
+                                        >
+                                            {i + 1}
+                                        </button>
+                                    ))}
+                                    <button
+                                        onClick={() => goToPage(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className={`${styles.paginationButton} ${
+                                            currentPage === totalPages
+                                                ? styles.paginationButtonDisabled
+                                                : ""
+                                        }`}
+                                    >
+                                        Suivant <ChevronRight size={16} />
                                     </button>
                                 </div>
                             </div>
@@ -272,51 +322,77 @@ export default function NonConformite() {
                     </div>
                 </div>
 
-                {/* Modal pour ajouter un processus */}
+                {/* MODAL */}
                 {isModalOpen && (
                     <div className={styles.modalOverlay}>
                         <div className={styles.modal}>
                             <Card className={styles.modalCard}>
                                 <CardHeader className={styles.modalHeader}>
                                     <div className={styles.modalTitleSection}>
-                                        <CardTitle className={styles.modalTitle}>Déclarer une non conformité</CardTitle>
-                                        <button onClick={closeModal} className={styles.closeButton}>
+                                        <CardTitle className={styles.modalTitle}>
+                                            Déclarer une Non Conformité
+                                        </CardTitle>
+                                        <button
+                                            onClick={closeModal}
+                                            className={styles.closeButton}
+                                        >
                                             <X size={20} />
                                         </button>
                                     </div>
                                 </CardHeader>
                                 <CardContent>
                                     <form onSubmit={handleSubmit} className={styles.form}>
-                                        <div className={styles.topData}>
-                                            <div className={styles.formGroup}>
-                                                <label htmlFor="name" className={styles.label}>Code </label>
-                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrer un code" required />
-                                            </div>
-                                            <div className={styles.formGroup}>
-                                                <label htmlFor="name" className={styles.label}>Titre de la non conformité</label>
-                                                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} className={styles.input} placeholder="Entrez le titre de la non conformité" required />
-                                            </div>
-                                        </div>
-
                                         <div className={styles.formGroup}>
-                                            <label htmlFor="processus" className={styles.label}>Processus affecté</label>
-                                            <div className={styles.selectContainer}>
-                                                <select id="processus" name="processus" value={formData.processus} onChange={handleInputChange} className={styles.select} required>
-                                                    <option value="">Sélectionner un processus</option>
-                                                    {processusOptions.map((option) => (
-                                                        <option key={option.value} value={option.value}>{option.label}</option>
-                                                    ))}
-                                                </select>
-                                            </div>
+                                            <label className={styles.label}>Code</label>
+                                            <input
+                                                type="text"
+                                                name="code"
+                                                value={formData.code}
+                                                onChange={handleInputChange}
+                                                className={styles.input}
+                                                required
+                                            />
                                         </div>
                                         <div className={styles.formGroup}>
-                                            <label htmlFor="description" className={styles.label}>Description de la non conformité</label>
-                                            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea} required></textarea>
+                                            <label className={styles.label}>Titre</label>
+                                            <input
+                                                type="text"
+                                                name="title"
+                                                value={formData.title}
+                                                onChange={handleInputChange}
+                                                className={styles.input}
+                                                required
+                                            />
                                         </div>
-
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>
+                                                Processus concerné
+                                            </label>
+                                            <select name="process_name" value={formData.process_name} onChange={handleInputChange} className={styles.select} required>
+                                                <option value="">
+                                                    Sélectionnez un processus
+                                                </option>
+                                                {processus.map((p) => (
+                                                    <option key={p.id} value={p.name}>
+                                                        {p.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>
+                                                Description
+                                            </label>
+                                            <textarea name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea}
+                                            ></textarea>
+                                        </div>
                                         <div className={styles.formActions}>
-                                            <button type="button" onClick={closeModal} className={styles.cancelButton}>Annuler</button>
-                                            <button type="submit" className={styles.submitButton}>Ajouter le non conformité</button>
+                                            <button type="button" onClick={closeModal} className={styles.cancelButton}>
+                                                Annuler
+                                            </button>
+                                            <button type="submit" className={styles.submitButton}>
+                                                Ajouter
+                                            </button>
                                         </div>
                                     </form>
                                 </CardContent>
@@ -325,6 +401,7 @@ export default function NonConformite() {
                     </div>
                 )}
             </div>
+
         </LayoutRQ>
-    );
+);
 }
