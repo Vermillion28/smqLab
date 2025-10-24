@@ -458,3 +458,18 @@
     font-weight: 500;
     margin: 0;
 }
+
+.ouvertStatus {
+    background-color: #39be6c;
+    color: white;
+}
+
+.enCoursStatus {
+    background-color: #e7870a;
+    color: white;
+}
+
+.fermeStatus {
+    background-color: #e7190a;
+    color: white;
+}

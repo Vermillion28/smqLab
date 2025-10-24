@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Toastify from 'toastify-js';
 import { Badge } from "@/components/ui/badge";
 import { Users, Mail, Calendar, Shield, X } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -75,20 +76,48 @@ export default function Utilisateurs() {
       const data = await res.json();
 
       if (data.success) {
-        alert("Utilisateur créé avec succès !");
+        Toastify({
+            text: "Utilisateur créé avec succès !",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4ade80",
+        }).showToast();
         fetchUsers();
         setIsModalOpen(false);
         setFormData({ name: "", email: "", role: "" });
       } else if (data.status_code === 422) {
         // erreurs de validation
         const messages = Object.values(data.errors).flat().join("\n");
-        alert(messages);
+        Toastify({
+            text: messages,
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ef4444",
+        }).showToast();
       } else {
-        alert(data.message || "Erreur lors de la création");
+        Toastify({
+            text: data.message || "Erreur lors de la création",
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ef4444",
+        }).showToast();
       }
     } catch (error) {
       console.error("Erreur lors de la création de l'utilisateur:", error);
-      alert("Erreur serveur");
+      Toastify({
+        text: "Erreur serveur",
+        duration: 5000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ef4444",
+    }).showToast();
     }
   };
 
@@ -128,16 +157,37 @@ export default function Utilisateurs() {
       const data = await res.json();
 
       if (data.success) {
-        alert("Rôle modifié avec succès !");
+        Toastify({
+            text: "Rôle modifié avec succès !",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4ade80",
+        }).showToast();
         fetchUsers(); // Rafraîchir la liste
         setIsEditModalOpen(false);
         setSelectedUser(null);
       } else {
-        alert(data.message || "Erreur lors de la modification du rôle");
+        Toastify({
+            text: data.message || "Erreur lors de la modification du rôle",
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ef4444",
+        }).showToast();
       }
     } catch (error) {
       console.error("Erreur lors de la modification :", error);
-      alert("Erreur serveur");
+      Toastify({
+        text: "Erreur serveur",
+        duration: 5000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ef4444",
+    }).showToast();
     }
   };
 
@@ -155,14 +205,35 @@ export default function Utilisateurs() {
       const data = await res.json();
 
       if (data.success) {
-        alert("Utilisateur supprimé avec succès !");
+        Toastify({
+            text: "Utilisateur supprimé avec succès !",
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#4ade80",
+        }).showToast();
         fetchUsers(); // Rafraîchir la liste
       } else {
-        alert(data.message || "Erreur lors de la suppression");
+        Toastify({
+            text: data.message || "Erreur lors de la suppression",
+            duration: 5000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            backgroundColor: "#ef4444",
+        }).showToast();
       }
     } catch (error) {
       console.error("Erreur lors de la suppression :", error);
-      alert("Erreur serveur");
+      Toastify({
+        text: "Erreur serveur",
+        duration: 5000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#ef4444",
+    }).showToast();
     }
   };
 

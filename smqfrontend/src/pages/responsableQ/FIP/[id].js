@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import React from 'react';
 import { useProcessus } from '@/Context/ProcessusContext';
 import LayoutRQ from "@/Layout/layoutResponsableQ";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download, FileText, Users, Target, Shield, BarChart3, Settings, Workflow } from "lucide-react";
 import styles from "@/styles/processus.module.css";
 import domtoimage from 'dom-to-image';
 
@@ -14,426 +14,402 @@ export default function ProcessusDetails() {
     const { id } = router.query;
     const { getProcessusById } = useProcessus();
 
-    // const handleDownload = async () => {
-    //     const element = printRef.current;
-    //     if (!element) return;
-
-    //     // Créer l'iframe pour l'isolation
-    //     const iframe = document.createElement('iframe');
-    //     iframe.style.visibility = 'hidden';
-    //     iframe.style.position = 'fixed';
-    //     iframe.style.right = '0';
-    //     iframe.style.bottom = '0';
-    //     iframe.style.width = '794px'; // A4 width in pixels (210mm)
-    //     iframe.style.height = '1123px'; // A4 height in pixels (297mm)
-    //     document.body.appendChild(iframe);
-
-    //     try {
-    //         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-            
-    //         // Cloner le contenu AVEC les styles calculés
-    //         const clone = element.cloneNode(true);
-            
-    //         // Récupérer tous les styles CSS de la page
-    //         const allStyles = Array.from(document.styleSheets)
-    //             .map(sheet => {
-    //                 try {
-    //                     return Array.from(sheet.cssRules)
-    //                         .map(rule => rule.cssText)
-    //                         .join('\n');
-    //                 } catch (e) {
-    //                     return '';
-    //                 }
-    //             })
-    //             .join('\n');
-
-    //         // Styles spécifiques pour l'impression PDF
-    //         const printStyles = `
-    //             /* Styles globaux */
-    //             body {
-    //                 margin: 0;
-    //                 padding: 20px;
-    //                 font-family: 'Arial', sans-serif;
-    //                 background: white;
-    //                 color: black;
-    //                 line-height: 1.4;
-    //             }
-                
-    //             /* Reproduire le style de votre page */
-    //             .printableArea {
-    //                 width: 100%;
-    //                 max-width: none;
-    //                 margin: 0;
-    //                 padding: 0;
-    //                 border: none;
-    //                 background: white;
-    //             }
-                
-    //             h1 {
-    //                 color: none;
-    //                 font-size: 24px;
-    //                 margin-bottom: 20px;
-    //                 padding-bottom: 10px;
-    //                 border-bottom: 2px solid none;
-    //                 text-align: center;
-    //             }
-                
-    //             .detailsSection {
-    //                 margin-bottom: 20px;
-    //                 padding: 15px;
-    //                 border: 1px solid #ddd;
-    //                 border-radius: 8px;
-    //                 background: none;
-    //                 break-inside: avoid;
-    //                 page-break-inside: avoid;
-    //             }
-                
-    //             .detailsSection h2 {
-    //                 color: none;
-    //                 font-size: 18px;
-    //                 margin: 0 0 15px 0;
-    //                 padding-bottom: 8px;
-    //                 border-bottom: 1px solid none;
-    //             }
-                
-    //             .detailsSection p {
-    //                 margin: 8px 0;
-    //                 font-size: 14px;
-    //             }
-                
-    //             .detailsSection strong {
-    //                 color: none;
-    //             }
-                
-    //             .detailsSection ul {
-    //                 margin: 10px 0;
-    //                 padding-left: 20px;
-    //             }
-                
-    //             .detailsSection li {
-    //                 margin-bottom: 6px;
-    //                 font-size: 13px;
-    //                 line-height: 1.4;
-    //             }
-                
-    //             /* Grid layout pour PDF */
-    //             .dataGrid {
-    //                 display: block;
-    //             }
-                
-    //             .compactSection {
-    //                 margin-bottom: 15px;
-    //                 padding: 12px;
-    //                 border: 1px none none;
-    //                 border-radius: 6px;
-    //                 background: none;
-    //             }
-                
-    //             .compactSection h3 {
-    //                 font-size: 16px;
-    //                 margin: 0 0 10px 0;
-    //             }
-                
-    //             /* Couleurs forcées pour impression */
-    //             * {
-    //                 -webkit-print-color-adjust: exact !important;
-    //                 color-adjust: exact !important;
-    //                 print-color-adjust: exact !important;
-    //             }
-                
-    //             ${allStyles}
-    //         `;
-
-    //         // Créer la structure HTML complète
-    //         const htmlContent = `
-    //             <!DOCTYPE html>
-    //             <html>
-    //             <head>
-    //                 <meta charset="utf-8">
-    //                 <title>Processus PDF</title>
-    //                 <style>${printStyles}</style>
-    //             </head>
-    //             <body>
-    //                 ${clone.outerHTML}
-    //             </body>
-    //             </html>
-    //         `;
-
-    //         iframeDoc.open();
-    //         iframeDoc.write(htmlContent);
-    //         iframeDoc.close();
-
-    //         // Attendre le chargement des styles
-    //         await new Promise(resolve => {
-    //             iframe.onload = resolve;
-    //             setTimeout(resolve, 1000);
-    //         });
-
-    //         const canvas = await html2canvas(iframeDoc.body, {
-    //             backgroundColor: "#ffffff",
-    //             scale: 2,
-    //             useCORS: true,
-    //             allowTaint: false,
-    //             logging: false,
-    //             width: iframeDoc.body.scrollWidth,
-    //             height: iframeDoc.body.scrollHeight,
-    //             onclone: (clonedDoc) => {
-    //                 // Forcer les couleurs sur le clone
-    //                 const elements = clonedDoc.querySelectorAll('*');
-    //                 elements.forEach(el => {
-    //                     el.style.color = '#000000';
-    //                     el.style.backgroundColor = '#ffffff';
-    //                 });
-    //             }
-    //         });
-
-    //         const imgData = canvas.toDataURL('image/png', 1.0);
-            
-    //         const pdf = new jsPDF({
-    //             orientation: 'portrait',
-    //             unit: 'mm',
-    //             format: 'a4'
-    //         });
-
-    //         const pageWidth = pdf.internal.pageSize.getWidth();
-    //         const pageHeight = pdf.internal.pageSize.getHeight();
-            
-    //         const margin = 10;
-    //         const contentWidth = pageWidth - (2 * margin);
-    //         const contentHeight = (canvas.height * contentWidth) / canvas.width;
-
-    //         let position = margin;
-    //         let remainingHeight = contentHeight;
-
-    //         // Première page
-    //         pdf.addImage(imgData, 'PNG', margin, position, contentWidth, contentHeight);
-    //         remainingHeight -= (pageHeight - (2 * margin));
-
-    //         // Pages supplémentaires si nécessaire
-    //         while (remainingHeight > 0) {
-    //             position = -remainingHeight;
-    //             pdf.addPage();
-    //             pdf.addImage(imgData, 'PNG', margin, position, contentWidth, contentHeight);
-    //             remainingHeight -= pageHeight;
-    //         }
-
-    //         pdf.save(`processus-${processus.name}.pdf`);
-
-    //     } catch (error) {
-    //         console.error('Erreur génération PDF:', error);
-    //         alert('Erreur lors de la génération du PDF');
-    //     } finally {
-    //         document.body.removeChild(iframe);
-    //     }
-    // };
-
     const handleDownloadWithDomToImage = async () => {
         const element = printRef.current;
         if (!element) return;
-    
+
         try {
-            // Créer une copie nettoyée
-            const clone = element.cloneNode(true);
-            
-            // Nettoyer les styles
-            clone.querySelectorAll('*').forEach(el => {
-                el.style.backgroundImage = 'none';
-                el.style.background = '#ffffff';
-            });
-    
-            document.body.appendChild(clone);
-    
-            const dataUrl = await domtoimage.toPng(clone, {
+            const dataUrl = await domtoimage.toPng(element, {
                 bgcolor: '#ffffff',
                 style: {
-                    'transform': 'none',
-                    'background': '#ffffff'
-                }
+                    transform: 'none',
+                    background: '#ffffff',
+                },
+                quality: 1,
             });
-    
+
             const pdf = new jsPDF('p', 'mm', 'a4');
             const pageWidth = pdf.internal.pageSize.getWidth();
-            
+            const pageHeight = pdf.internal.pageSize.getHeight();
+
             const img = new Image();
             img.src = dataUrl;
-            
+
             await new Promise((resolve) => {
                 img.onload = resolve;
             });
-    
-            const imgWidth = pageWidth - 20;
+
+            const imgWidth = pageWidth;
             const imgHeight = (img.height * imgWidth) / img.width;
-    
-            pdf.addImage(img, 'PNG', 10, 10, imgWidth, imgHeight);
-            pdf.save('processus.pdf');
-            
+
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(dataUrl, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft > 0) {
+                position -= pageHeight;
+                pdf.addPage();
+                pdf.addImage(dataUrl, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+            }
+
+            pdf.save(`processus-${processus.name}.pdf`);
         } catch (error) {
-            console.error('Erreur:', error);
-        } finally {
-            const clone = document.querySelector('[cloned-element]');
-            if (clone) clone.remove();
+            console.error('Erreur lors de la génération du PDF :', error);
+            alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
         }
     };
 
-    // Attendre que l'ID soit disponible
-    if (!id) return <div>Chargement...</div>;
+    if (!id) return <div className={styles.loading}>Chargement...</div>;
 
     const processus = getProcessusById(Number(id));
 
     if (!processus) {
         return (
             <LayoutRQ>
-                <div className={styles.fileContainer}>
-                    <p>Processus non trouvé</p>
-                    <button onClick={() => router.push('/responsableQ/processus')}>
-                        Retour à la liste
-                    </button>
+                <div className={styles.errorContainer}>
+                    <div className={styles.errorContent}>
+                        <h2>Processus non trouvé</h2>
+                        <p>Le processus que vous recherchez n'existe pas ou a été supprimé.</p>
+                        <button 
+                            onClick={() => router.push('/responsableQ/processus')}
+                            className={styles.primaryButton}
+                        >
+                            Retour à la liste des processus
+                        </button>
+                    </div>
                 </div>
             </LayoutRQ>
         );
     }
 
     // Fonctions pour afficher les données structurées
-    const renderSimpleList = (data) => {
-        if (Array.isArray(data)) {
+    const renderSimpleList = (data, emptyMessage = "Aucune donnée") => {
+        if (Array.isArray(data) && data.length > 0) {
             return data.map((item, index) => {
-                // Si c'est un objet avec une propriété 'name' ou 'libelle'
                 if (typeof item === 'object' && item !== null) {
                     return <li key={index}>{item.name || item.libelle || JSON.stringify(item)}</li>;
                 }
-                // Si c'est une chaîne simple
                 return <li key={index}>{item}</li>;
             });
-        } else if (typeof data === 'object' && data !== null) {
+        } else if (typeof data === 'object' && data !== null && Object.keys(data).length > 0) {
             return Object.values(data).map((item, index) => (
                 <li key={index}>{item}</li>
             ));
         }
-        return <li>Aucune donnée</li>;
+        return <li className={styles.emptyItem}>{emptyMessage}</li>;
     };
 
     const renderProcessusRelations = (data) => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
             return data.map((item, index) => {
-                // Pour les objets processus avec id et name
                 if (item && typeof item === 'object' && item.name) {
-                    return <li key={index}>{item.name} (ID: {item.id})</li>;
+                    return <li key={index}>{item.name} {item.id && `(ID: ${item.id})`}</li>;
                 }
-                // Pour les autres types d'objets
                 if (typeof item === 'object') {
                     return <li key={index}>{JSON.stringify(item)}</li>;
                 }
                 return <li key={index}>{item}</li>;
             });
-        } else if (typeof data === 'object' && data !== null) {
-            return Object.values(data).map((item, index) => (
-                <li key={index}>{item}</li>
-            ));
         }
-        return <li>Aucun processus défini</li>;
+        return <li className={styles.emptyItem}>Aucun processus défini</li>;
     };
 
     const renderRisques = (risques) => {
-        if (!Array.isArray(risques)) return <li>Aucun risque défini</li>;
-        
-        return risques.map((risque, index) => (
-            <li key={index}>
-                <strong>Risque :</strong> {risque.risque_cle} - 
-                <strong> Action :</strong> {risque.action_corrective}
-            </li>
-        ));
+        if (Array.isArray(risques) && risques.length > 0) {
+            return risques.map((risque, index) => (
+                <li key={index} className={styles.riskItem}>
+                    <div className={styles.riskContent}>
+                        <span className={styles.riskLabel}>Risque :</span>
+                        <span className={styles.riskValue}>{risque.risque_cle}</span>
+                    </div>
+                    <div className={styles.riskContent}>
+                        <span className={styles.riskLabel}>Action :</span>
+                        <span className={styles.actionValue}>{risque.action_corrective}</span>
+                    </div>
+                </li>
+            ));
+        }
+        return <li className={styles.emptyItem}>Aucun risque défini</li>;
     };
 
     const renderIndicateurs = (indicateurs) => {
-        if (!Array.isArray(indicateurs)) return <li>Aucun indicateur défini</li>;
-        
-        return indicateurs.map((ind, index) => (
-            <li key={index}>
-                <strong>{ind.indicateur} :</strong> {ind.valeur_cible} ({ind.frequence})
-            </li>
-        ));
+        if (Array.isArray(indicateurs) && indicateurs.length > 0) {
+            return indicateurs.map((ind, index) => (
+                <li key={index} className={styles.indicatorItem}>
+                    <div className={styles.indicatorHeader}>
+                        <span className={styles.indicatorName}>{ind.indicateur}</span>
+                        <span className={styles.indicatorFrequency}>{ind.frequence}</span>
+                    </div>
+                    <div className={styles.indicatorTarget}>
+                        Valeur cible : <strong>{ind.valeur_cible}</strong>
+                    </div>
+                </li>
+            ));
+        }
+        return <li className={styles.emptyItem}>Aucun indicateur défini</li>;
+    };
+
+    const getStatusColor = (status) => {
+        switch (status?.toLowerCase()) {
+            case 'actif': return '#10b981';
+            case 'inactif': return '#ef4444';
+            case 'en cours': return '#f59e0b';
+            default: return '#6b7280';
+        }
+    };
+
+    const getTypeColor = (type) => {
+        switch (type?.toLowerCase()) {
+            case 'management': return '#3b82f6';
+            case 'support': return '#8b5cf6';
+            case 'réalisation': return '#06b6d4';
+            default: return '#6b7280';
+        }
     };
 
     return (
         <LayoutRQ>
-            <div className={styles.fileContainer}>
-                <button onClick={() => router.back()} className={styles.backButton}>
-                    <ArrowLeft size={20} />Retour
-                </button>
-
-                <div ref={printRef} className={styles.printableArea}>
-                    <h1>Fiche d'identité processus</h1>
-                    
-                    <div className={styles.detailsSection}>
-                        <h2>Informations générales</h2>
-                        <p><strong>Nom :</strong> {processus.name}</p>
-                        <p><strong>Description :</strong> {processus.description}</p>
-                        <p><strong>Statut :</strong> {processus.status}</p>
-                        <p><strong>Pilote :</strong> {processus.author}</p>
-                        <p><strong>Copilote :</strong> {processus.copilote}</p>
-                        <p><strong>Dernière mise à jour :</strong> {processus.lastUpdate}</p>
-                        <p><strong>Documents :</strong> {processus.documents}</p>
-                        <p><strong>Tâches :</strong> {processus.tasks}</p>
-                        <p><strong>Progression :</strong> {processus.progressValue}%</p>
-                        <p><strong>Type :</strong> {processus.type}</p>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Cadrage</h2>
-                        <p><strong>Finalité :</strong> {processus.finalité}</p>
-                        <p><strong>Champs d'application :</strong> {processus.champs_application}</p>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Objectifs</h2>
-                        <ul>{renderSimpleList(processus.objectifs)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Exigences</h2>
-                        <ul>{renderSimpleList(processus.exigences)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Ressources associées</h2>
-                        <ul>{renderSimpleList(processus.ressources_associees)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Flux</h2>
-                        <p><strong>Éléments entrants :</strong></p>
-                        <ul>{renderSimpleList(processus.element_entres)}</ul>
-                        
-                        <p><strong>Éléments sortants :</strong></p>
-                        <ul>{renderSimpleList(processus.element_sortis)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Parties prenantes</h2>
-                        <p><strong>Bénéficiaires :</strong></p>
-                        <ul>{renderSimpleList(processus.beneficiare)}</ul>
-                        
-                        <p><strong>Processus amont :</strong></p>
-                        <ul>{renderProcessusRelations(processus.processus_amont)}</ul>
-                        
-                        <p><strong>Processus aval :</strong></p>
-                        <ul>{renderProcessusRelations(processus.processus_aval)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Risques et actions correctives</h2>
-                        <ul>{renderRisques(processus.risque_actions)}</ul>
-                    </div>
-
-                    <div className={styles.detailsSection}>
-                        <h2>Indicateurs de performance</h2>
-                        <ul>{renderIndicateurs(processus.indicateur_performance)}</ul>
+            <div className={styles.container}>
+                {/* Header avec navigation */}
+                <div className={styles.header}>
+                    <button onClick={() => router.back()} className={styles.backButton}>
+                        <ArrowLeft size={20} />
+                        Retour
+                    </button>
+                    <div className={styles.headerActions}>
+                        <button 
+                            onClick={handleDownloadWithDomToImage} 
+                            className={styles.downloadButton}
+                        >
+                            <Download size={18} />
+                            Télécharger PDF
+                        </button>
                     </div>
                 </div>
 
-                <button onClick={handleDownloadWithDomToImage} className={styles.downloadButton}>
-                    Télécharger en PDF
-                </button>
+                {/* Contenu principal */}
+                <div className={styles.content}>
+                    {/* Carte d'identité du processus */}
+                    <div className={styles.identityCard}>
+                        <div className={styles.identityHeader}>
+                            <div className={styles.processusTitle}>
+                                <h1>{processus.name}</h1>
+                                <div className={styles.statusBadges}>
+                                    <span 
+                                        className={styles.statusBadge}
+                                        style={{ backgroundColor: getStatusColor(processus.status) }}
+                                    >
+                                        {processus.status}
+                                    </span>
+                                    <span 
+                                        className={styles.typeBadge}
+                                        style={{ backgroundColor: getTypeColor(processus.type) }}
+                                    >
+                                        {processus.type}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className={styles.progressSection}>
+                                <div className={styles.progressHeader}>
+                                    <span>Progression</span>
+                                    <span className={styles.progressValue}>{processus.progressValue}%</span>
+                                </div>
+                                <div className={styles.progressBar}>
+                                    <div 
+                                        className={styles.progressFill}
+                                        style={{ width: `${processus.progressValue}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className={styles.identityMeta}>
+                            <div className={styles.metaItem}>
+                                <Users size={16} />
+                                <span><strong>Pilote :</strong> {processus.author}</span>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <Users size={16} />
+                                <span><strong>Co-pilote :</strong> {processus.copilote || 'Non défini'}</span>
+                            </div>
+                            <div className={styles.metaItem}>
+                                <FileText size={16} />
+                                <span><strong>Dernière mise à jour :</strong> {processus.lastUpdate}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Grille des sections */}
+                    <div ref={printRef} className={styles.printableArea}>
+                        <div className={styles.gridLayout}>
+                            {/* Colonne de gauche */}
+                            <div className={styles.column}>
+                                {/* Informations générales */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Settings size={20} />
+                                        <h2>Informations générales</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <p className={styles.description}>{processus.description}</p>
+                                        <div className={styles.statsGrid}>
+                                            <div className={styles.statItem}>
+                                                <span className={styles.statLabel}>Documents</span>
+                                                <span className={styles.statValue}>{processus.documents}</span>
+                                            </div>
+                                            <div className={styles.statItem}>
+                                                <span className={styles.statLabel}>Tâches</span>
+                                                <span className={styles.statValue}>{processus.tasks}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* Cadrage */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Target size={20} />
+                                        <h2>Cadrage</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <div className={styles.infoItem}>
+                                            <strong>Finalité :</strong>
+                                            <p>{processus.finalité || 'Non définie'}</p>
+                                        </div>
+                                        <div className={styles.infoItem}>
+                                            <strong>Champs d'application :</strong>
+                                            <p>{processus.champs_application || 'Non définis'}</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* Objectifs */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Target size={20} />
+                                        <h2>Objectifs</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <ul className={styles.styledList}>
+                                            {renderSimpleList(processus.objectifs, "Aucun objectif défini")}
+                                        </ul>
+                                    </div>
+                                </section>
+
+                                {/* Exigences */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Shield size={20} />
+                                        <h2>Exigences</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <ul className={styles.styledList}>
+                                            {renderSimpleList(processus.exigences, "Aucune exigence définie")}
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+
+                            {/* Colonne de droite */}
+                            <div className={styles.column}>
+                                {/* Ressources associées */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Settings size={20} />
+                                        <h2>Ressources associées</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <ul className={styles.styledList}>
+                                            {renderSimpleList(processus.ressources_associees, "Aucune ressource définie")}
+                                        </ul>
+                                    </div>
+                                </section>
+
+                                {/* Flux */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Workflow size={20} />
+                                        <h2>Flux</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <div className={styles.fluxSection}>
+                                            <h3>Éléments entrants</h3>
+                                            <ul className={styles.styledList}>
+                                                {renderSimpleList(processus.element_entres, "Aucun élément entrant")}
+                                            </ul>
+                                        </div>
+                                        <div className={styles.fluxSection}>
+                                            <h3>Éléments sortants</h3>
+                                            <ul className={styles.styledList}>
+                                                {renderSimpleList(processus.element_sortis, "Aucun élément sortant")}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                {/* Parties prenantes */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Users size={20} />
+                                        <h2>Parties prenantes</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <div className={styles.stakeholderSection}>
+                                            <h3>Bénéficiaires</h3>
+                                            <ul className={styles.styledList}>
+                                                {renderSimpleList(processus.beneficiare, "Aucun bénéficiaire défini")}
+                                            </ul>
+                                        </div>
+                                        <div className={styles.stakeholderSection}>
+                                            <h3>Processus amont</h3>
+                                            <ul className={styles.styledList}>
+                                                {renderProcessusRelations(processus.processus_amont)}
+                                            </ul>
+                                        </div>
+                                        <div className={styles.stakeholderSection}>
+                                            <h3>Processus aval</h3>
+                                            <ul className={styles.styledList}>
+                                                {renderProcessusRelations(processus.processus_aval)}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+
+                            {/* Colonne pleine largeur pour risques et indicateurs */}
+                            <div className={styles.fullWidth}>
+                                {/* Risques et actions */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <Shield size={20} />
+                                        <h2>Risques et actions correctives</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <ul className={styles.risksList}>
+                                            {renderRisques(processus.risque_actions)}
+                                        </ul>
+                                    </div>
+                                </section>
+
+                                {/* Indicateurs de performance */}
+                                <section className={styles.sectionCard}>
+                                    <div className={styles.sectionHeader}>
+                                        <BarChart3 size={20} />
+                                        <h2>Indicateurs de performance</h2>
+                                    </div>
+                                    <div className={styles.sectionContent}>
+                                        <ul className={styles.indicatorsList}>
+                                            {renderIndicateurs(processus.indicateur_performance)}
+                                        </ul>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </LayoutRQ>
     );

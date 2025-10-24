@@ -100,52 +100,31 @@ function FichePosteForm({ onClose, onSubmit }) {
                         <h3>Informations Générales</h3>
                         <div className={styles.formGroup}>
                             <label>Intitulé du poste *</label>
-                            <input
-                                type="text"
-                                value={formData.intitulePoste}
-                                onChange={(e) => handleInputChange('intitulePoste', e.target.value)}
-                                required
+                            <input type="text" value={formData.intitulePoste} onChange={(e) => handleInputChange('intitulePoste', e.target.value)} required
                             />
                         </div>
 
                         <div className={styles.formGroup}>
                             <label>Description du poste *</label>
-                            <textarea
-                                value={formData.descriptionPoste}
-                                onChange={(e) => handleInputChange('descriptionPoste', e.target.value)}
-                                rows="4"
-                                required
-                            />
+                            <textarea value={formData.descriptionPoste} onChange={(e) => handleInputChange('descriptionPoste', e.target.value)} rows="4" required/>
                         </div>
 
                         <div className={styles.formRow}>
                             <div className={styles.formGroup}>
                                 <label>Direction / Département</label>
-                                <input
-                                    type="text"
-                                    value={formData.direction}
-                                    onChange={(e) => handleInputChange('direction', e.target.value)}
-                                />
+                                <input type="text" value={formData.direction} onChange={(e) => handleInputChange('direction', e.target.value)}/>
                             </div>
 
                             <div className={styles.formGroup}>
                                 <label>Hiérarchique</label>
-                                <input
-                                    type="text"
-                                    value={formData.hierarchique}
-                                    onChange={(e) => handleInputChange('hierarchique', e.target.value)}
+                                <input type="text" value={formData.hierarchique} onChange={(e) => handleInputChange('hierarchique', e.target.value)}
                                 />
                             </div>
                         </div>
 
                         <div className={styles.formGroup}>
                             <label>Encadrement</label>
-                            <input
-                                type="text"
-                                value={formData.encadrement}
-                                onChange={(e) => handleInputChange('encadrement', e.target.value)}
-                                placeholder="Départements supervisés"
-                            />
+                            <input type="text" value={formData.encadrement} onChange={(e) => handleInputChange('encadrement', e.target.value)} placeholder="Départements supervisés"/>
                         </div>
                     </div>
 
@@ -154,27 +133,14 @@ function FichePosteForm({ onClose, onSubmit }) {
                         <h3>Responsabilités & Activités</h3>
                         {formData.responsabilites.map((responsabilite, index) => (
                             <div key={index} className={styles.arrayItem}>
-                                <input
-                                    type="text"
-                                    value={responsabilite}
-                                    onChange={(e) => handleArrayChange('responsabilites', index, e.target.value)}
-                                    placeholder="Responsabilité"
-                                />
-                                <button 
-                                    type="button" 
-                                    className={styles.removeButton}
-                                    onClick={() => removeArrayItem('responsabilites', index)}
-                                >
+                                <input type="text" value={responsabilite} onChange={(e) => handleArrayChange('responsabilites', index, e.target.value)} placeholder="Responsabilité" />
+                                <button type="button" className={styles.removeButton} onClick={() => removeArrayItem('responsabilites', index)}>
                                     ×
                                 </button>
                             </div>
                         ))}
-                        <button 
-                            type="button" 
-                            className={styles.addButton}
-                            onClick={() => addArrayItem('responsabilites')}
-                        >
-                            + Ajouter une responsabilité
+                        <button type="button" className={styles.addButton}onClick={() => addArrayItem('responsabilites')}
+                        >+ Ajouter une responsabilité
                         </button>
                     </div>
 
@@ -184,14 +150,9 @@ function FichePosteForm({ onClose, onSubmit }) {
                             <h3>Compétences Techniques</h3>
                             {formData.competencesTechniques.map((competence, index) => (
                                 <div key={index} className={styles.arrayItem}>
-                                    <input
-                                        type="text"
-                                        value={competence}
-                                        onChange={(e) => handleArrayChange('competencesTechniques', index, e.target.value)}
+                                    <input type="text" value={competence} onChange={(e) => handleArrayChange('competencesTechniques', index, e.target.value)}
                                     />
-                                    <button 
-                                        type="button"
-                                        onClick={() => removeArrayItem('competencesTechniques', index)}
+                                    <button  type="button" onClick={() => removeArrayItem('competencesTechniques', index)}
                                     >
                                         ×
                                     </button>

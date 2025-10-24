@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
+import Toastify from 'toastify-js';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, Search, Filter, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { AlertTriangle, Search, Filter, ChevronLeft, ChevronRight, X, Plus, Trash2 } from "lucide-react";
 import styles from "@/styles/nonConformite.module.css";
 import LayoutRQ from "@/Layout/layoutResponsableQ";
 import {MyButton} from "@/components/myButtonComponent";
@@ -16,7 +17,11 @@ export default function NonConformite() {
         code: "",
         title: "",
         process_name: "",
-        description: ""
+        severity: "",
+        status: "ouvert",
+        description: "",
+        causes: [""], // Tableau pour gérer plusieurs causes
+        correctiveActions: [""] // Tableau pour gérer les actions correctives correspondantes
     });
 
     // États pour recherche et filtres
@@ -72,26 +77,90 @@ export default function NonConformite() {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    // 🔹 Gestion des causes et actions correctives
+    const handleCauseChange = (index, value) => {
+        const newCauses = [...formData.causes];
+        newCauses[index] = value;
+        setFormData((prev) => ({ ...prev, causes: newCauses }));
+    };
+
+    const handleCorrectiveActionChange = (index, value) => {
+        const newActions = [...formData.correctiveActions];
+        newActions[index] = value;
+        setFormData((prev) => ({ ...prev, correctiveActions: newActions }));
+    };
+
+    const addCauseActionPair = () => {
+        setFormData((prev) => ({
+            ...prev,
+            causes: [...prev.causes, ""],
+            correctiveActions: [...prev.correctiveActions, ""]
+        }));
+    };
+
+    const removeCauseActionPair = (index) => {
+        if (formData.causes.length > 1) {
+            setFormData((prev) => ({
+                ...prev,
+                causes: prev.causes.filter((_, i) => i !== index),
+                correctiveActions: prev.correctiveActions.filter((_, i) => i !== index)
+            }));
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            // Filtrer les paires cause/action vides
+            const filteredCauses = formData.causes.filter(cause => cause.trim() !== "");
+            const filteredActions = formData.correctiveActions.filter(action => action.trim() !== "");
+
+            const submissionData = {
+                ...formData,
+                causes: filteredCauses,
+                correctiveActions: filteredActions
+            };
+
             const res = await fetch("http://127.0.0.1:8000/api/non-conformities", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(submissionData),
             });
             const data = await res.json();
 
             if (data.success) {
-                alert("✅ Non-conformité créée avec succès !");
+                Toastify({
+                    text: "Non-conformité créée avec succès !",
+                    duration: 3000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#4ade80",
+                }).showToast();
                 setIsModalOpen(false);
-                setFormData({ code: "", title: "", process_name: "", description: "" });
+                setFormData({ 
+                    code: "", 
+                    title: "", 
+                    process_name: "", 
+                    severity: "", 
+                    status: "ouvert",
+                    description: "", 
+                    causes: [""], 
+                    correctiveActions: [""] 
+                });
                 setNonConformites((prev) => [data.data, ...prev]);
             } else {
-                alert("❌ Erreur : " + (data.message || "Impossible de créer la non-conformité"));
+                Toastify({
+                    text: "Erreur : " + (data.message || "Impossible de créer la non-conformité"),
+                    duration: 5000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    backgroundColor: "#ef4444",
+                }).showToast();
                 console.error(data.errors);
             }
         } catch (err) {
@@ -101,7 +170,16 @@ export default function NonConformite() {
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setFormData({ code: "", title: "", process_name: "", description: "" });
+        setFormData({ 
+            code: "", 
+            title: "", 
+            process_name: "", 
+            severity: "", 
+            status: "ouvert",
+            description: "", 
+            causes: [""], 
+            correctiveActions: [""] 
+        });
     };
 
     // 🔹 Recherche et filtres
@@ -151,8 +229,6 @@ export default function NonConformite() {
                         </div>
                     </div>
 
-                    
-
                     {/* STATS */}
                     <div className={styles.statsGrid}>
                         <Card className={styles.statsCard}>
@@ -200,12 +276,7 @@ export default function NonConformite() {
                         <div className={styles.searchBar}>
                             <div className={styles.searchInputWrapper}>
                                 <Search size={18} className={styles.searchIcon} />
-                                <input
-                                    type="text"
-                                    placeholder="Rechercher une non-conformité..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                    className={styles.searchInput}
+                                <input type="text" placeholder="Rechercher une non-conformité..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={styles.searchInput}
                                 />
                             </div>
                         </div>
@@ -214,19 +285,14 @@ export default function NonConformite() {
                             <span className={styles.filterLabel}>
                                 <Filter size={16} /> Filtres:
                             </span>
-                            <select
-                                value={statusFilter}
-                                onChange={(e) => setStatusFilter(e.target.value)}
-                                className={styles.filterSelect}
+                            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className={styles.filterSelect}
                             >
                                 <option value="tous">Tous les statuts</option>
-                                <option value="actif">Actif</option>
+                                <option value="ouvert">Ouvert</option>
                                 <option value="en cours">En cours</option>
+                                <option value="fermé">Fermé</option>
                             </select>
-                            <select
-                                value={authorFilter}
-                                onChange={(e) => setAuthorFilter(e.target.value)}
-                                className={styles.filterSelect}
+                            <select value={authorFilter} onChange={(e) => setAuthorFilter(e.target.value)} className={styles.filterSelect}
                             >
                                 <option value="tous">Tous les auteurs</option>
                                 {[...new Set(nonConformites.map((nc) => nc.creator?.name))].map(
@@ -254,16 +320,7 @@ export default function NonConformite() {
                                 <p>Chargement...</p>
                             ) : currentNC.length > 0 ? (
                                 currentNC.map((nc) => (
-                                    <CardNC
-                                        key={nc.id}
-                                        codeNC={nc.code}
-                                        titre={nc.title}
-                                        processus={nc.process?.name}
-                                        description={nc.description}
-                                        author={nc.creator?.name || "Inconnu"}
-                                        date={new Date(nc.created_at).toLocaleDateString()}
-                                        NCstatus="Actif"
-                                    />
+                                    <CardNC key={nc.id} codeNC={nc.code} titre={nc.title} processus={nc.process?.name} description={nc.description} author={nc.creator?.name || "Inconnu"} date={new Date(nc.created_at).toLocaleDateString()} NCstatus="Actif"/>
                                 ))
                             ) : (
                                 <div className={styles.noResults}>
@@ -344,24 +401,12 @@ export default function NonConformite() {
                                     <form onSubmit={handleSubmit} className={styles.form}>
                                         <div className={styles.formGroup}>
                                             <label className={styles.label}>Code</label>
-                                            <input
-                                                type="text"
-                                                name="code"
-                                                value={formData.code}
-                                                onChange={handleInputChange}
-                                                className={styles.input}
-                                                required
+                                            <input type="text" name="code" value={formData.code} onChange={handleInputChange} className={styles.input} required
                                             />
                                         </div>
                                         <div className={styles.formGroup}>
                                             <label className={styles.label}>Titre</label>
-                                            <input
-                                                type="text"
-                                                name="title"
-                                                value={formData.title}
-                                                onChange={handleInputChange}
-                                                className={styles.input}
-                                                required
+                                            <input type="text" name="title" value={formData.title} onChange={handleInputChange} className={styles.input} required
                                             />
                                         </div>
                                         <div className={styles.formGroup}>
@@ -379,6 +424,31 @@ export default function NonConformite() {
                                                 ))}
                                             </select>
                                         </div>
+                                        
+                                        {/* Nouveaux champs ajoutés */}
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>
+                                                Sévérité
+                                            </label>
+                                            <select name="severity" value={formData.severity} onChange={handleInputChange} className={styles.select} required>
+                                                <option value="">Sélectionnez la sévérité</option>
+                                                <option value="majeur">Majeur</option>
+                                                <option value="moyen">Moyen</option>
+                                                <option value="mineur">Mineur</option>
+                                            </select>
+                                        </div>
+
+                                        <div className={styles.formGroup}>
+                                            <label className={styles.label}>
+                                                Statut
+                                            </label>
+                                            <select name="status" value={formData.status} onChange={handleInputChange} className={styles.select} required>
+                                                <option value="ouvert">Ouvert</option>
+                                                <option value="en cours">En cours</option>
+                                                <option value="fermé">Fermé</option>
+                                            </select>
+                                        </div>
+
                                         <div className={styles.formGroup}>
                                             <label className={styles.label}>
                                                 Description
@@ -386,6 +456,62 @@ export default function NonConformite() {
                                             <textarea name="description" value={formData.description} onChange={handleInputChange} className={styles.textarea}
                                             ></textarea>
                                         </div>
+
+                                        {/* Causes et Actions Correctives */}
+                                        <div className={styles.causeActionSection}>
+                                            <div className={styles.sectionHeader}>
+                                                <label className={styles.label}>
+                                                    Causes et Actions Correctives
+                                                </label>
+                                                <button 
+                                                    type="button" 
+                                                    onClick={addCauseActionPair}
+                                                    className={styles.addButton}
+                                                >
+                                                    <Plus size={16} /> Ajouter une paire
+                                                </button>
+                                            </div>
+                                            
+                                            {formData.causes.map((cause, index) => (
+                                                <div key={index} className={styles.causeActionPair}>
+                                                    <div className={styles.pairHeader}>
+                                                        <span className={styles.pairNumber}>Paire {index + 1}</span>
+                                                        {formData.causes.length > 1 && (
+                                                            <button 
+                                                                type="button" 
+                                                                onClick={() => removeCauseActionPair(index)}
+                                                                className={styles.removeButton}
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className={styles.pairInputs}>
+                                                        <div className={styles.inputGroup}>
+                                                            <label className={styles.sublabel}>Cause</label>
+                                                            <input 
+                                                                type="text" 
+                                                                value={cause}
+                                                                onChange={(e) => handleCauseChange(index, e.target.value)}
+                                                                className={styles.input}
+                                                                placeholder="Décrire la cause..."
+                                                            />
+                                                        </div>
+                                                        <div className={styles.inputGroup}>
+                                                            <label className={styles.sublabel}>Action Corrective</label>
+                                                            <input 
+                                                                type="text" 
+                                                                value={formData.correctiveActions[index]}
+                                                                onChange={(e) => handleCorrectiveActionChange(index, e.target.value)}
+                                                                className={styles.input}
+                                                                placeholder="Décrire l'action corrective..."
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
                                         <div className={styles.formActions}>
                                             <button type="button" onClick={closeModal} className={styles.cancelButton}>
                                                 Annuler
@@ -401,7 +527,6 @@ export default function NonConformite() {
                     </div>
                 )}
             </div>
-
         </LayoutRQ>
-);
+    );
 }

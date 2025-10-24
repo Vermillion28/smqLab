@@ -203,7 +203,7 @@ function CardNC({ nonConformiteId, codeNC, titre, processus, description, severi
                 <div>
                     <div className={styles.h2}>
                         <h2>{codeNC}</h2>
-                        <span className={styles.statusBadge + ' ' + (NCstatus === "Actif" ? styles.activeStatus : styles.inactiveStatus)}>
+                        <span className={styles.statusBadge + ' ' + (NCstatus === "ouvert" ? styles.ouvertStatus : NCstatus === "en cours" ? styles.enCoursStatus : NCstatus === "fermé" ? styles.fermeStatus : styles.inactiveStatus)}>
                             {NCstatus}
                         </span>
                     </div>
